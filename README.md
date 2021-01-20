@@ -1,3 +1,3 @@
-## Welcome to Effect-TS - Jest
+## Welcome to Effect-TS - Monocle
 
-Please follow up to: [https://github.com/Effect-TS/jest/tree/master/packages/jest](https://github.com/Effect-TS/jest/tree/master/packages/jest)
+Please follow up to: [https://github.com/Effect-TS/monocle/tree/master/packages/monocle](https://github.com/Effect-TS/monocle/tree/master/packages/monocle)
