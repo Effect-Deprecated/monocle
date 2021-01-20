@@ -1,3 +1,3 @@
-### Monocle
+## Welcome to Effect-TS - Jest
 
-This package is forked from `https://github.com/gcanti/monocle-ts` and adapted to work with the `@effect-ts` ecosystem. All credits the to original authors.
+Please follow up to: [https://github.com/Effect-TS/jest/tree/master/packages/jest](https://github.com/Effect-TS/jest/tree/master/packages/jest)
