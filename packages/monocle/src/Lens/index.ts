@@ -168,14 +168,14 @@ export const left: <S, E, A>(
 ) => Optional<S, E> = composePrism(_.prismLeft())
 
 /**
- * Return a `Traversal` from a `Lens` focused on a `Traversable`
+ * Return a `Traversal` from a `Lens` focused on a `ForEach`
  */
-export function traverse<T extends P.URIS, C = P.Auto>(
-  T: P.Traversable<T, C>
+export function forEach<T extends P.URIS, C = P.Auto>(
+  T: P.ForEach<T, C>
 ): <TN extends string, TK, TQ, TW, TX, TI, TS, TR, TE, S, A>(
   sta: Lens<S, P.Kind<T, C, TN, TK, TQ, TW, TX, TI, TS, TR, TE, A>>
 ) => Traversal<S, A> {
-  return flow(asTraversal, _.traversalComposeTraversal(_.fromTraversable(T)()))
+  return flow(asTraversal, _.traversalComposeTraversal(_.fromForEach(T)()))
 }
 
 export const findFirst: <A>(

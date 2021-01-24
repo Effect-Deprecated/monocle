@@ -247,8 +247,8 @@ export function traversalComposeTraversal<A, B>(
   })
 }
 
-export function fromTraversable<T extends P.URIS, C = P.Auto>(
-  T: P.Traversable<T, C>
+export function fromForEach<T extends P.URIS, C = P.Auto>(
+  T: P.ForEach<T, C>
 ): <
   A,
   N extends string = P.Initial<C, "N">,
@@ -261,11 +261,11 @@ export function fromTraversable<T extends P.URIS, C = P.Auto>(
   R = P.Initial<C, "R">,
   E = P.Initial<C, "E">
 >() => Traversal<P.Kind<T, C, N, K, Q, W, X, I, S, R, E, A>, A>
-export function fromTraversable<T>(
-  T: P.Traversable<P.UHKT<T>>
+export function fromForEach<T>(
+  T: P.ForEach<P.UHKT<T>>
 ): <A>() => Traversal<P.HKT<T, A>, A> {
   return <A>(): Traversal<P.HKT<T, A>, A> => ({
-    modifyF: T.foreachF
+    modifyF: T.forEachF
   })
 }
 

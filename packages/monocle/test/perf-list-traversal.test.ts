@@ -55,7 +55,7 @@ it("monocle-ts traversal list", () => {
     Lens.prop("m"),
     Lens.prop("n"),
     Lens.prop("names"),
-    Lens.traverse(L.Traversable),
+    Lens.forEach(L.ForEach),
     Traversal.filter((child) => child.id === id)
   )
 

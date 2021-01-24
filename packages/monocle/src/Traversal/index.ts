@@ -3,7 +3,7 @@
  * from a type `S` into `0` to `n` values of type `A`.
  *
  * The most common example of a `Traversal` would be to focus into all elements inside of a container (e.g.
- * `Array`, `Option`). To do this we will use the relation between the typeclass `Traversable` and `Traversal`.
+ * `Array`, `Option`). To do this we will use the relation between the typeclass `ForEach` and `Traversal`.
  */
 import * as A from "@effect-ts/core/Array"
 import * as C from "@effect-ts/core/Const"
@@ -51,9 +51,9 @@ export const id = <S>(): Traversal<S, S> => ({
 })
 
 /**
- * Create a `Traversal` from a `Traversable`
+ * Create a `Traversal` from a `ForEach`
  */
-export const fromTraversable = _.fromTraversable
+export const fromForEach = _.fromForEach
 
 // -------------------------------------------------------------------------------------
 // compositions
@@ -162,14 +162,14 @@ export const left: <S, E, A>(
 ) => Traversal<S, E> = compose(_.prismAsTraversal(_.prismLeft()))
 
 /**
- * Return a `Traversal` from a `Traversal` focused on a `Traversable`
+ * Return a `Traversal` from a `Traversal` focused on a `ForEach`
  */
-export function traverse<T extends P.URIS, C = P.Auto>(
-  T: P.Traversable<T, C>
+export function forEach<T extends P.URIS, C = P.Auto>(
+  T: P.ForEach<T, C>
 ): <TN extends string, TK, TQ, TW, TX, TI, TS, TR, TE, S, A>(
   sta: Traversal<S, P.Kind<T, C, TN, TK, TQ, TW, TX, TI, TS, TR, TE, A>>
 ) => Traversal<S, A> {
-  return compose(fromTraversable(T)())
+  return compose(fromForEach(T)())
 }
 
 /**
