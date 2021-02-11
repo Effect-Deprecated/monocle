@@ -9,6 +9,7 @@
 import { flow, identity, pipe } from "@effect-ts/core/Function"
 import type { Newtype } from "@effect-ts/core/Newtype"
 import * as O from "@effect-ts/core/Option"
+import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"
 
 import * as _ from "../Internal"
@@ -108,21 +109,21 @@ export const imap: <A, B>(
 // instances
 // -------------------------------------------------------------------------------------
 
-export const URI = "monocle/Iso"
-export type URI = typeof URI
+export const IsoURI = "monocle/Iso"
+export type IsoURI = typeof IsoURI
 
 declare module "@effect-ts/core/Prelude/HKT" {
   export interface URItoKind<FC, TC, N extends string, K, Q, W, X, I, S, R, E, A> {
-    [URI]: Iso<I, A>
+    [IsoURI]: Iso<I, A>
   }
 }
 
-export const Category = P.instance<P.Category<[URI]>>({
+export const Category = P.instance<P.Category<URI<IsoURI>>>({
   compose,
   id
 })
 
-export const Invariant = P.instance<P.Invariant<[URI]>>({
+export const Invariant = P.instance<P.Invariant<URI<IsoURI>>>({
   invmap: ({ f, g }) => ({
     f: imap(f, g),
     g: imap(g, f)

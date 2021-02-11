@@ -15,6 +15,7 @@ import type { Either } from "@effect-ts/core/Either"
 import type { Predicate, Refinement } from "@effect-ts/core/Function"
 import { constant, flow, pipe } from "@effect-ts/core/Function"
 import * as O from "@effect-ts/core/Option"
+import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"
 
 import * as _ from "../Internal"
@@ -193,21 +194,21 @@ export const imap: <A, B>(
 // instances
 // -------------------------------------------------------------------------------------
 
-export const URI = "monocle/Optional"
-export type URI = typeof URI
+export const OptionalURI = "monocle/Optional"
+export type OptionalURI = typeof OptionalURI
 
 declare module "@effect-ts/core/Prelude/HKT" {
   export interface URItoKind<FC, TC, N extends string, K, Q, W, X, I, S, R, E, A> {
-    [URI]: Optional<I, A>
+    [OptionalURI]: Optional<I, A>
   }
 }
 
-export const Category = P.instance<P.Category<[URI]>>({
+export const Category = P.instance<P.Category<URI<OptionalURI>>>({
   compose,
   id
 })
 
-export const Invariant = P.instance<P.Invariant<[URI]>>({
+export const Invariant = P.instance<P.Invariant<URI<OptionalURI>>>({
   invmap: ({ f, g }) => ({
     f: imap(f, g),
     g: imap(g, f)

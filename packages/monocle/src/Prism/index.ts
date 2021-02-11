@@ -11,6 +11,7 @@ import type { Predicate, Refinement } from "@effect-ts/core/Function"
 import { flow, identity, pipe } from "@effect-ts/core/Function"
 import type { Newtype } from "@effect-ts/core/Newtype"
 import * as O from "@effect-ts/core/Option"
+import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"
 
 import * as _ from "../Internal"
@@ -218,21 +219,21 @@ export const imap: <A, B>(
 // instances
 // -------------------------------------------------------------------------------------
 
-export const URI = "monocle/Prism"
-export type URI = typeof URI
+export const PrismURI = "monocle/Prism"
+export type PrismURI = typeof PrismURI
 
 declare module "@effect-ts/core/Prelude/HKT" {
   export interface URItoKind<FC, TC, N extends string, K, Q, W, X, I, S, R, E, A> {
-    [URI]: Prism<I, A>
+    [PrismURI]: Prism<I, A>
   }
 }
 
-export const Category = P.instance<P.Category<[URI]>>({
+export const Category = P.instance<P.Category<URI<PrismURI>>>({
   compose,
   id
 })
 
-export const Invariant = P.instance<P.Invariant<[URI]>>({
+export const Invariant = P.instance<P.Invariant<URI<PrismURI>>>({
   invmap: ({ f, g }) => ({
     f: imap(f, g),
     g: imap(g, f)

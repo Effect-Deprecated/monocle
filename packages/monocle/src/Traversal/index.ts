@@ -14,6 +14,7 @@ import * as I from "@effect-ts/core/Id"
 import type { Identity } from "@effect-ts/core/Identity"
 import * as L from "@effect-ts/core/List"
 import type { Option } from "@effect-ts/core/Option"
+import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"
 
 import * as _ from "../Internal"
@@ -207,16 +208,16 @@ export const getAllList = <S>(s: S) => <A>(sa: Traversal<S, A>): L.List<A> =>
 // instances
 // -------------------------------------------------------------------------------------
 
-export const URI = "monocle/Traversal"
-export type URI = typeof URI
+export const TraversalURI = "monocle/Traversal"
+export type TraversalURI = typeof TraversalURI
 
 declare module "@effect-ts/core/Prelude/HKT" {
   export interface URItoKind<FC, TC, N extends string, K, Q, W, X, I, S, R, E, A> {
-    [URI]: Traversal<I, A>
+    [TraversalURI]: Traversal<I, A>
   }
 }
 
-export const Category = P.instance<P.Category<[URI]>>({
+export const Category = P.instance<P.Category<URI<TraversalURI>>>({
   compose,
   id
 })
