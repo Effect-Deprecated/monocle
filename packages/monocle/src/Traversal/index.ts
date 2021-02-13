@@ -217,7 +217,7 @@ declare module "@effect-ts/core/Prelude/HKT" {
   }
 }
 
-export const Category = P.instance<P.Category<URI<TraversalURI>>>({
+export const Category = P.instance<P.Category<[URI<TraversalURI>]>>({
   compose,
   id
 })

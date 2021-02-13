@@ -203,12 +203,12 @@ declare module "@effect-ts/core/Prelude/HKT" {
   }
 }
 
-export const Category = P.instance<P.Category<URI<OptionalURI>>>({
+export const Category = P.instance<P.Category<[URI<OptionalURI>]>>({
   compose,
   id
 })
 
-export const Invariant = P.instance<P.Invariant<URI<OptionalURI>>>({
+export const Invariant = P.instance<P.Invariant<[URI<OptionalURI>]>>({
   invmap: ({ f, g }) => ({
     f: imap(f, g),
     g: imap(g, f)
