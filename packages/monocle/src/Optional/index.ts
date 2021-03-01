@@ -165,8 +165,8 @@ export const left: <S, E, A>(
  */
 export function forEach<T extends P.URIS, C = P.Auto>(
   T: P.ForEach<T, C>
-): <TN extends string, TK, TQ, TW, TX, TI, TS, TR, TE, S, A>(
-  sta: Optional<S, P.Kind<T, C, TN, TK, TQ, TW, TX, TI, TS, TR, TE, A>>
+): <TK, TQ, TW, TX, TI, TS, TR, TE, S, A>(
+  sta: Optional<S, P.Kind<T, C, TK, TQ, TW, TX, TI, TS, TR, TE, A>>
 ) => Traversal<S, A> {
   return flow(asTraversal, _.traversalComposeTraversal(_.fromForEach(T)()))
 }
@@ -198,7 +198,7 @@ export const OptionalURI = "monocle/Optional"
 export type OptionalURI = typeof OptionalURI
 
 declare module "@effect-ts/core/Prelude/HKT" {
-  export interface URItoKind<FC, TC, N extends string, K, Q, W, X, I, S, R, E, A> {
+  export interface URItoKind<FC, TC, K, Q, W, X, I, S, R, E, A> {
     [OptionalURI]: Optional<I, A>
   }
 }

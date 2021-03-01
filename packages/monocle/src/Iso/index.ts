@@ -113,7 +113,7 @@ export const IsoURI = "monocle/Iso"
 export type IsoURI = typeof IsoURI
 
 declare module "@effect-ts/core/Prelude/HKT" {
-  export interface URItoKind<FC, TC, N extends string, K, Q, W, X, I, S, R, E, A> {
+  export interface URItoKind<FC, TC, K, Q, W, X, I, S, R, E, A> {
     [IsoURI]: Iso<I, A>
   }
 }

@@ -25,7 +25,6 @@ import * as _ from "../Internal"
 
 export interface ModifyF<S, A> {
   <F extends P.URIS, C = P.Auto>(F: P.Applicative<F, C>): <
-    FN extends string,
     FK,
     FQ,
     FW,
@@ -35,8 +34,8 @@ export interface ModifyF<S, A> {
     FR,
     FE
   >(
-    f: (a: A) => P.Kind<F, C, FN, FK, FQ, FW, FX, FI, FS, FR, FE, A>
-  ) => (s: S) => P.Kind<F, C, FN, FK, FQ, FW, FX, FI, FS, FR, FE, S>
+    f: (a: A) => P.Kind<F, C, FK, FQ, FW, FX, FI, FS, FR, FE, A>
+  ) => (s: S) => P.Kind<F, C, FK, FQ, FW, FX, FI, FS, FR, FE, S>
 }
 
 export interface Traversal<S, A> {
@@ -167,8 +166,8 @@ export const left: <S, E, A>(
  */
 export function forEach<T extends P.URIS, C = P.Auto>(
   T: P.ForEach<T, C>
-): <TN extends string, TK, TQ, TW, TX, TI, TS, TR, TE, S, A>(
-  sta: Traversal<S, P.Kind<T, C, TN, TK, TQ, TW, TX, TI, TS, TR, TE, A>>
+): <TK, TQ, TW, TX, TI, TS, TR, TE, S, A>(
+  sta: Traversal<S, P.Kind<T, C, TK, TQ, TW, TX, TI, TS, TR, TE, A>>
 ) => Traversal<S, A> {
   return compose(fromForEach(T)())
 }
@@ -212,7 +211,7 @@ export const TraversalURI = "monocle/Traversal"
 export type TraversalURI = typeof TraversalURI
 
 declare module "@effect-ts/core/Prelude/HKT" {
-  export interface URItoKind<FC, TC, N extends string, K, Q, W, X, I, S, R, E, A> {
+  export interface URItoKind<FC, TC, K, Q, W, X, I, S, R, E, A> {
     [TraversalURI]: Traversal<I, A>
   }
 }

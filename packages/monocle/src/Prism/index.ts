@@ -190,8 +190,8 @@ export const left: <S, E, A>(sea: Prism<S, Either<E, A>>) => Prism<S, E> = compo
  */
 export function forEach<T extends P.URIS, C = P.Auto>(
   T: P.ForEach<T, C>
-): <TN extends string, TK, TQ, TW, TX, TI, TS, TR, TE, S, A>(
-  sta: Prism<S, P.Kind<T, C, TN, TK, TQ, TW, TX, TI, TS, TR, TE, A>>
+): <TK, TQ, TW, TX, TI, TS, TR, TE, S, A>(
+  sta: Prism<S, P.Kind<T, C, TK, TQ, TW, TX, TI, TS, TR, TE, A>>
 ) => Traversal<S, A> {
   return flow(asTraversal, _.traversalComposeTraversal(_.fromForEach(T)()))
 }
@@ -223,7 +223,7 @@ export const PrismURI = "monocle/Prism"
 export type PrismURI = typeof PrismURI
 
 declare module "@effect-ts/core/Prelude/HKT" {
-  export interface URItoKind<FC, TC, N extends string, K, Q, W, X, I, S, R, E, A> {
+  export interface URItoKind<FC, TC, K, Q, W, X, I, S, R, E, A> {
     [PrismURI]: Prism<I, A>
   }
 }

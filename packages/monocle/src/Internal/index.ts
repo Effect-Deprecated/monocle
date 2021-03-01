@@ -1,12 +1,12 @@
 import type { Array } from "@effect-ts/core/Array"
 import * as A from "@effect-ts/core/Array"
+import * as R from "@effect-ts/core/Dictionary"
 import * as E from "@effect-ts/core/Either"
 import type { Predicate } from "@effect-ts/core/Function"
 import { constant, flow, identity, pipe } from "@effect-ts/core/Function"
 import * as O from "@effect-ts/core/Option"
 import type * as P from "@effect-ts/core/Prelude"
 import * as DSL from "@effect-ts/core/Prelude/DSL"
-import * as R from "@effect-ts/core/Record"
 
 import type { At } from "../At"
 import type { Iso } from "../Iso"
@@ -251,7 +251,6 @@ export function fromForEach<T extends P.URIS, C = P.Auto>(
   T: P.ForEach<T, C>
 ): <
   A,
-  N extends string = P.Initial<C, "N">,
   K = P.Initial<C, "K">,
   Q = P.Initial<C, "Q">,
   W = P.Initial<C, "W">,
@@ -260,7 +259,7 @@ export function fromForEach<T extends P.URIS, C = P.Auto>(
   S = P.Initial<C, "S">,
   R = P.Initial<C, "R">,
   E = P.Initial<C, "E">
->() => Traversal<P.Kind<T, C, N, K, Q, W, X, I, S, R, E, A>, A>
+>() => Traversal<P.Kind<T, C, K, Q, W, X, I, S, R, E, A>, A>
 export function fromForEach<T>(
   T: P.ForEach<P.UHKT<T>>
 ): <A>() => Traversal<P.HKT<T, A>, A> {
