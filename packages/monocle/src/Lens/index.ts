@@ -1,3 +1,5 @@
+// tracing: off
+
 /**
  * A `Lens` is an optic used to zoom inside a product.
  *

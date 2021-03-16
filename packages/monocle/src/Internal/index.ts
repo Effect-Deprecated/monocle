@@ -1,3 +1,5 @@
+// tracing: off
+
 import type { Array } from "@effect-ts/core/Array"
 import * as A from "@effect-ts/core/Array"
 import * as R from "@effect-ts/core/Dictionary"
