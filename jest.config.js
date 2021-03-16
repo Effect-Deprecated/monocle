@@ -15,8 +15,8 @@ module.exports = {
   ],
   verbose: true,
   moduleNameMapper: {
-    "@effect-ts/monocle/(.*)$": "<rootDir>/packages/monocle/build/_traced/$1",
-    "@effect-ts/monocle$": "<rootDir>/packages/monocle/build/_traced"
+    "@effect-ts/monocle/(.*)$": "<rootDir>/packages/monocle/build/$1",
+    "@effect-ts/monocle$": "<rootDir>/packages/monocle/build"
   },
   globals: {
     "ts-jest": {
