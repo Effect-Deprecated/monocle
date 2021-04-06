@@ -14,10 +14,6 @@ module.exports = {
     "<rootDir>/_tmp"
   ],
   verbose: true,
-  moduleNameMapper: {
-    "@effect-ts/monocle/(.*)$": "<rootDir>/packages/monocle/build/$1",
-    "@effect-ts/monocle$": "<rootDir>/packages/monocle/build"
-  },
   globals: {
     "ts-jest": {
       tsconfig: "<rootDir>/tsconfig.jest.json",
