@@ -28,5 +28,15 @@ describe("Lens", () => {
         firstName.getOption
       )
     ).toEqual(some("Updated"))
-  })
+  }),
+    it("props should not set more props", () => {
+      type A = { a: string; b: string }
+      const l = L.id<A>()
+      expect(
+        pipe(
+          { a: "a", b: "b" },
+          l["|>"](L.props("a", "b")).set({ a: "1", b: "2", ...{ c: "3" } })
+        )
+      ).toEqual({ a: "1", b: "2" })
+    })
 })

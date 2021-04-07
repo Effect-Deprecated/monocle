@@ -91,10 +91,16 @@ export const lensProps = <A, P extends keyof A>(...props: [P, P, ...Array<P>]) =
   },
   set: (a) => (s) => {
     const oa = lens.get(s)
+    const b: any = {}
+    let mod = false
     for (const k of props) {
       if (a[k] !== oa[k]) {
-        return lens.set(Object.assign({}, oa, a))(s)
+        mod = true
+        b[k] = a[k]
       }
+    }
+    if (mod) {
+      return lens.set(Object.assign({}, oa, b))(s)
     }
     return s
   }
