@@ -31,11 +31,14 @@ describe("Lens", () => {
   }),
     it("props should not set more props", () => {
       type A = { a: string; b: string }
-      const l = L.id<A>()
       expect(
         pipe(
           { a: "a", b: "b" },
-          l["|>"](L.props("a", "b")).set({ a: "1", b: "2", ...{ c: "3" } })
+          pipe(
+            L.id<A>(),
+            L.props("a", "b"),
+            L.set({ a: "1", b: "2", ...({ c: "3" } as {}) })
+          )
         )
       ).toEqual({ a: "1", b: "2" })
     })

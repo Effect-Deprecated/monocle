@@ -171,6 +171,16 @@ export const left: <S, E, A>(
 ) => Optional<S, E> = composePrism(_.prismLeft())
 
 /**
+ * Pipeable set
+ */
+export const set = <A>(a: A) => <S>(lens: Lens<S, A>) => lens.set(a)
+
+/**
+ * Pipeable set
+ */
+export const get = <S, A>(lens: Lens<S, A>) => lens.get
+
+/**
  * Return a `Traversal` from a `Lens` focused on a `ForEach`
  */
 export function forEach<T extends P.URIS, C = P.Auto>(
