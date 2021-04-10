@@ -351,10 +351,10 @@
   resolved "https://registry.yarnpkg.com/@effect-ts/system/-/system-0.26.0.tgz#6ecf59b51030ff3739ea8e7adccc1deb917ffd29"
   integrity sha512-tHxivRUAMZdT2IVAEy8Zbu0OfZ9S+vE9LjJJofBe/1MjNd3OtcUm14++eCWshCSGhT0s/Ttj4VyctUXhWEqhpw==
 
-"@effect-ts/tracing-plugin@^0.8.4":
-  version "0.8.4"
-  resolved "https://registry.yarnpkg.com/@effect-ts/tracing-plugin/-/tracing-plugin-0.8.4.tgz#148ce610598d003334ac53d86da94edf083a395a"
-  integrity sha512-DhGc8zIQ68SsgNiYrL82aZvJwuoqVCWfUb63WC+xMIYc6ZZsBsnyde0skLFHpFejdOhUAoooCdpTi5+F+/OBVw==
+"@effect-ts/tracing-plugin@^0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@effect-ts/tracing-plugin/-/tracing-plugin-0.9.0.tgz#5c47d2f8995529afba74af4ce87cff45edf5998f"
+  integrity sha512-VgVVBOh8m6yjIobSDQ+oNBVsGX6Cjs2u5sG1V2hZF8tSjtj8u5a9QFq1wSlq9A11WRII4v6A/VH0L4KoKCAR5w==
 
 "@eslint/eslintrc@^0.4.0":
   version "0.4.0"
