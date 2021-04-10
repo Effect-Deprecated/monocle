@@ -7,14 +7,14 @@
  * The most common example of a `Traversal` would be to focus into all elements inside of a container (e.g.
  * `Array`, `Option`). To do this we will use the relation between the typeclass `ForEach` and `Traversal`.
  */
-import * as A from "@effect-ts/core/Array"
+import * as A from "@effect-ts/core/Collections/Immutable/Array"
+import * as L from "@effect-ts/core/Collections/Immutable/List"
 import * as C from "@effect-ts/core/Const"
 import type { Either } from "@effect-ts/core/Either"
 import type { Predicate, Refinement } from "@effect-ts/core/Function"
 import { identity, pipe } from "@effect-ts/core/Function"
 import * as I from "@effect-ts/core/Id"
 import type { Identity } from "@effect-ts/core/Identity"
-import * as L from "@effect-ts/core/List"
 import type { Option } from "@effect-ts/core/Option"
 import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"

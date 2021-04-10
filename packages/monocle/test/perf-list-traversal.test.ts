@@ -1,7 +1,7 @@
 // from https://github.com/akheron/js-optics-benchmark/blob/master/test/benchmark.test.ts
 
+import * as L from "@effect-ts/core/Collections/Immutable/List"
 import { pipe } from "@effect-ts/core/Function"
-import * as L from "@effect-ts/core/List"
 import * as O from "@effect-ts/core/Option"
 
 import * as Lens from "../src/Lens"
