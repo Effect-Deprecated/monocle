@@ -1,8 +1,8 @@
 // tracing: off
 
-import type { Array } from "@effect-ts/core/Array"
-import * as A from "@effect-ts/core/Array"
-import * as R from "@effect-ts/core/Dictionary"
+import type { Array } from "@effect-ts/core/Collections/Immutable/Array"
+import * as A from "@effect-ts/core/Collections/Immutable/Array"
+import * as R from "@effect-ts/core/Collections/Immutable/Dictionary"
 import * as E from "@effect-ts/core/Either"
 import type { Predicate } from "@effect-ts/core/Function"
 import { constant, flow, identity, pipe } from "@effect-ts/core/Function"
