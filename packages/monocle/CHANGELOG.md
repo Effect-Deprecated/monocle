@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.29.0](https://github.com/Effect-TS/monocle/compare/@effect-ts/monocle@0.28.0...@effect-ts/monocle@0.29.0) (2021-04-18)
+
+**Note:** Version bump only for package @effect-ts/monocle
+
+
+
+
+
 # [0.28.0](https://github.com/Effect-TS/monocle/compare/@effect-ts/monocle@0.27.0...@effect-ts/monocle@0.28.0) (2021-04-15)
 
 **Note:** Version bump only for package @effect-ts/monocle
