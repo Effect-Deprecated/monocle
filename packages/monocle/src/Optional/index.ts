@@ -79,9 +79,8 @@ export const modify: <A>(
 /**
  * Return an `Optional` from a `Optional` focused on a nullable value
  */
-export const fromNullable: <S, A>(
-  sa: Optional<S, A>
-) => Optional<S, NonNullable<A>> = compose(_.prismAsOptional(_.prismFromNullable()))
+export const fromNullable: <S, A>(sa: Optional<S, A>) => Optional<S, NonNullable<A>> =
+  compose(_.prismAsOptional(_.prismFromNullable()))
 
 export function filter<A, B extends A>(
   refinement: Refinement<A, B>
@@ -122,24 +121,26 @@ export const component = <A extends ReadonlyArray<unknown>, P extends keyof A>(
 /**
  * Return a `Optional` from a `Optional` focused on a `ReadonlyArray`
  */
-export const index = (i: number) => <S, A>(
-  sa: Optional<S, ReadonlyArray<A>>
-): Optional<S, A> => pipe(sa, _.optionalComposeOptional(_.indexArray<A>().index(i)))
+export const index =
+  (i: number) =>
+  <S, A>(sa: Optional<S, ReadonlyArray<A>>): Optional<S, A> =>
+    pipe(sa, _.optionalComposeOptional(_.indexArray<A>().index(i)))
 
 /**
  * Return a `Optional` from a `Optional` focused on a `ReadonlyRecord` and a key
  */
-export const key = (key: string) => <S, A>(
-  sa: Optional<S, Readonly<Record<string, A>>>
-): Optional<S, A> => pipe(sa, _.optionalComposeOptional(_.indexRecord<A>().index(key)))
+export const key =
+  (key: string) =>
+  <S, A>(sa: Optional<S, Readonly<Record<string, A>>>): Optional<S, A> =>
+    pipe(sa, _.optionalComposeOptional(_.indexRecord<A>().index(key)))
 
 /**
  * Return a `Optional` from a `Optional` focused on a `ReadonlyRecord` and a required key
  */
-export const atKey = (key: string) => <S, A>(
-  sa: Optional<S, Readonly<Record<string, A>>>
-): Optional<S, Option<A>> =>
-  pipe(sa, compose(_.lensAsOptional(_.atRecord<A>().at(key))))
+export const atKey =
+  (key: string) =>
+  <S, A>(sa: Optional<S, Readonly<Record<string, A>>>): Optional<S, Option<A>> =>
+    pipe(sa, compose(_.lensAsOptional(_.atRecord<A>().at(key))))
 
 /**
  * Return a `Optional` from a `Optional` focused on the `Some` of a `Option` type
@@ -151,16 +152,14 @@ export const some: <S, A>(soa: Optional<S, Option<A>>) => Optional<S, A> = compo
 /**
  * Return a `Optional` from a `Optional` focused on the `Right` of a `Either` type
  */
-export const right: <S, E, A>(
-  sea: Optional<S, Either<E, A>>
-) => Optional<S, A> = compose(_.prismAsOptional(_.prismRight()))
+export const right: <S, E, A>(sea: Optional<S, Either<E, A>>) => Optional<S, A> =
+  compose(_.prismAsOptional(_.prismRight()))
 
 /**
  * Return a `Optional` from a `Optional` focused on the `Left` of a `Either` type
  */
-export const left: <S, E, A>(
-  sea: Optional<S, Either<E, A>>
-) => Optional<S, E> = compose(_.prismAsOptional(_.prismLeft()))
+export const left: <S, E, A>(sea: Optional<S, Either<E, A>>) => Optional<S, E> =
+  compose(_.prismAsOptional(_.prismLeft()))
 
 /**
  * Return a `Traversal` from a `Optional` focused on a `ForEach`

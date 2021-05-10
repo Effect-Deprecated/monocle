@@ -27,11 +27,11 @@ export const fromAt = <T, J, B>(at: At<T, J, Option<B>>): Index<T, J, B> => ({
 /**
  * Lift an instance of `Index` using an `Iso`
  */
-export const fromIso = <T, S>(iso: Iso<T, S>) => <I, A>(
-  sia: Index<S, I, A>
-): Index<T, I, A> => ({
-  index: (i) => pipe(iso, _.isoAsOptional, _.optionalComposeOptional(sia.index(i)))
-})
+export const fromIso =
+  <T, S>(iso: Iso<T, S>) =>
+  <I, A>(sia: Index<S, I, A>): Index<T, I, A> => ({
+    index: (i) => pipe(iso, _.isoAsOptional, _.optionalComposeOptional(sia.index(i)))
+  })
 
 export const indexArray: <A = never>() => Index<ReadonlyArray<A>, number, A> =
   _.indexArray

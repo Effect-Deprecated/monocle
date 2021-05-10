@@ -49,77 +49,78 @@ export const lensAsTraversal = <S, A>(sa: Lens<S, A>): Traversal<S, A> => ({
     )
 })
 
-export const lensComposeLens = <A, B>(ab: Lens<A, B>) => <S>(
-  sa: Lens<S, A>
-): Lens<S, B> => ({
-  get: (s) => ab.get(sa.get(s)),
-  set: (b) => (s) => sa.set(ab.set(b)(sa.get(s)))(s)
-})
+export const lensComposeLens =
+  <A, B>(ab: Lens<A, B>) =>
+  <S>(sa: Lens<S, A>): Lens<S, B> => ({
+    get: (s) => ab.get(sa.get(s)),
+    set: (b) => (s) => sa.set(ab.set(b)(sa.get(s)))(s)
+  })
 
-export const lensComposePrism = <A, B>(ab: Prism<A, B>) => <S>(
-  sa: Lens<S, A>
-): Optional<S, B> => optionalComposeOptional(prismAsOptional(ab))(lensAsOptional(sa))
+export const lensComposePrism =
+  <A, B>(ab: Prism<A, B>) =>
+  <S>(sa: Lens<S, A>): Optional<S, B> =>
+    optionalComposeOptional(prismAsOptional(ab))(lensAsOptional(sa))
 
 export const lensId = <S>(): Lens<S, S> => ({
   get: identity,
   set: constant
 })
 
-export const lensProp = <A, P extends keyof A>(prop: P) => <S>(
-  lens: Lens<S, A>
-): Lens<S, A[P]> => ({
-  get: (s) => lens.get(s)[prop],
-  set: (ap) => (s) => {
-    const oa = lens.get(s)
-    if (ap === oa[prop]) {
-      return s
-    }
-    return lens.set(Object.assign({}, oa, { [prop]: ap }))(s)
-  }
-})
-
-export const lensProps = <A, P extends keyof A>(...props: [P, P, ...Array<P>]) => <S>(
-  lens: Lens<S, A>
-): Lens<S, { [K in P]: A[K] }> => ({
-  get: (s) => {
-    const a = lens.get(s)
-    const r: { [K in P]?: A[K] } = {}
-    for (const k of props) {
-      r[k] = a[k]
-    }
-    return r as any
-  },
-  set: (a) => (s) => {
-    const oa = lens.get(s)
-    const b: any = {}
-    let mod = false
-    for (const k of props) {
-      if (a[k] !== oa[k]) {
-        mod = true
-        b[k] = a[k]
+export const lensProp =
+  <A, P extends keyof A>(prop: P) =>
+  <S>(lens: Lens<S, A>): Lens<S, A[P]> => ({
+    get: (s) => lens.get(s)[prop],
+    set: (ap) => (s) => {
+      const oa = lens.get(s)
+      if (ap === oa[prop]) {
+        return s
       }
+      return lens.set(Object.assign({}, oa, { [prop]: ap }))(s)
     }
-    if (mod) {
-      return lens.set(Object.assign({}, oa, b))(s)
-    }
-    return s
-  }
-})
+  })
 
-export const lensComponent = <A extends ReadonlyArray<unknown>, P extends keyof A>(
-  prop: P
-) => <S>(lens: Lens<S, A>): Lens<S, A[P]> => ({
-  get: (s) => lens.get(s)[prop],
-  set: (ap) => (s) => {
-    const oa = lens.get(s)
-    if (ap === oa[prop]) {
+export const lensProps =
+  <A, P extends keyof A>(...props: [P, P, ...Array<P>]) =>
+  <S>(lens: Lens<S, A>): Lens<S, { [K in P]: A[K] }> => ({
+    get: (s) => {
+      const a = lens.get(s)
+      const r: { [K in P]?: A[K] } = {}
+      for (const k of props) {
+        r[k] = a[k]
+      }
+      return r as any
+    },
+    set: (a) => (s) => {
+      const oa = lens.get(s)
+      const b: any = {}
+      let mod = false
+      for (const k of props) {
+        if (a[k] !== oa[k]) {
+          mod = true
+          b[k] = a[k]
+        }
+      }
+      if (mod) {
+        return lens.set(Object.assign({}, oa, b))(s)
+      }
       return s
     }
-    const copy: A = oa.slice() as any
-    copy[prop] = ap
-    return lens.set(copy)(s)
-  }
-})
+  })
+
+export const lensComponent =
+  <A extends ReadonlyArray<unknown>, P extends keyof A>(prop: P) =>
+  <S>(lens: Lens<S, A>): Lens<S, A[P]> => ({
+    get: (s) => lens.get(s)[prop],
+    set: (ap) => (s) => {
+      const oa = lens.get(s)
+      if (ap === oa[prop]) {
+        return s
+      }
+      const copy: A = oa.slice() as any
+      copy[prop] = ap
+      return lens.set(copy)(s)
+    }
+  })
 
 // -------------------------------------------------------------------------------------
 // Prism
@@ -142,27 +143,29 @@ export const prismAsTraversal = <S, A>(sa: Prism<S, A>): Traversal<S, A> => ({
   }
 })
 
-export const prismModifyOption = <A>(f: (a: A) => A) => <S>(sa: Prism<S, A>) => (
-  s: S
-): O.Option<S> =>
-  O.map_(sa.getOption(s), (o) => {
-    const n = f(o)
-    return n === o ? s : sa.reverseGet(n)
-  })
+export const prismModifyOption =
+  <A>(f: (a: A) => A) =>
+  <S>(sa: Prism<S, A>) =>
+  (s: S): O.Option<S> =>
+    O.map_(sa.getOption(s), (o) => {
+      const n = f(o)
+      return n === o ? s : sa.reverseGet(n)
+    })
 
-export const prismModify = <A>(f: (a: A) => A) => <S>(
-  sa: Prism<S, A>
-): ((s: S) => S) => {
-  const g = prismModifyOption(f)(sa)
-  return (s) => O.getOrElse_(g(s), () => s)
-}
+export const prismModify =
+  <A>(f: (a: A) => A) =>
+  <S>(sa: Prism<S, A>): ((s: S) => S) => {
+    const g = prismModifyOption(f)(sa)
+    return (s) => O.getOrElse_(g(s), () => s)
+  }
 
 export const prismSet = <A>(a: A): (<S>(sa: Prism<S, A>) => (s: S) => S) =>
   prismModify(() => a)
 
-export const prismComposeLens = <A, B>(ab: Lens<A, B>) => <S>(
-  sa: Prism<S, A>
-): Optional<S, B> => optionalComposeOptional(lensAsOptional(ab))(prismAsOptional(sa))
+export const prismComposeLens =
+  <A, B>(ab: Lens<A, B>) =>
+  <S>(sa: Prism<S, A>): Optional<S, B> =>
+    optionalComposeOptional(lensAsOptional(ab))(prismAsOptional(sa))
 
 export const prismFromNullable = <A>(): Prism<A, NonNullable<A>> => ({
   getOption: O.fromNullable,
@@ -207,27 +210,28 @@ export const optionalAsTraversal = <S, A>(sa: Optional<S, A>): Traversal<S, A> =
   }
 })
 
-export const optionalModifyOption = <A>(f: (a: A) => A) => <S>(
-  optional: Optional<S, A>
-) => (s: S): O.Option<S> =>
-  O.map_(optional.getOption(s), (a) => {
-    const n = f(a)
-    return n === a ? s : optional.set(n)(s)
+export const optionalModifyOption =
+  <A>(f: (a: A) => A) =>
+  <S>(optional: Optional<S, A>) =>
+  (s: S): O.Option<S> =>
+    O.map_(optional.getOption(s), (a) => {
+      const n = f(a)
+      return n === a ? s : optional.set(n)(s)
+    })
+
+export const optionalModify =
+  <A>(f: (a: A) => A) =>
+  <S>(optional: Optional<S, A>): ((s: S) => S) => {
+    const g = optionalModifyOption(f)(optional)
+    return (s) => O.getOrElse_(g(s), () => s)
+  }
+
+export const optionalComposeOptional =
+  <A, B>(ab: Optional<A, B>) =>
+  <S>(sa: Optional<S, A>): Optional<S, B> => ({
+    getOption: flow(sa.getOption, O.chain(ab.getOption)),
+    set: (b) => optionalModify(ab.set(b))(sa)
   })
-
-export const optionalModify = <A>(f: (a: A) => A) => <S>(
-  optional: Optional<S, A>
-): ((s: S) => S) => {
-  const g = optionalModifyOption(f)(optional)
-  return (s) => O.getOrElse_(g(s), () => s)
-}
-
-export const optionalComposeOptional = <A, B>(ab: Optional<A, B>) => <S>(
-  sa: Optional<S, A>
-): Optional<S, B> => ({
-  getOption: flow(sa.getOption, O.chain(ab.getOption)),
-  set: (b) => optionalModify(ab.set(b))(sa)
-})
 
 const findFirstMutable = <A>(predicate: Predicate<A>): Optional<Array<A>, A> => ({
   getOption: A.findFirst(predicate),
@@ -239,9 +243,8 @@ const findFirstMutable = <A>(predicate: Predicate<A>): Optional<Array<A>, A> => 
     )
 })
 
-export const findFirst: <A>(
-  predicate: Predicate<A>
-) => Optional<ReadonlyArray<A>, A> = findFirstMutable as any
+export const findFirst: <A>(predicate: Predicate<A>) => Optional<ReadonlyArray<A>, A> =
+  findFirstMutable as any
 
 // -------------------------------------------------------------------------------------
 // Traversal
@@ -289,11 +292,8 @@ function indexMutableArray<A = never>(): Index<Array<A>, number, A> {
   }
 }
 
-export const indexArray: <A = never>() => Index<
-  ReadonlyArray<A>,
-  number,
-  A
-> = indexMutableArray as any
+export const indexArray: <A = never>() => Index<ReadonlyArray<A>, number, A> =
+  indexMutableArray as any
 
 export function indexRecord<A = never>(): Index<
   Readonly<Record<string, A>>,

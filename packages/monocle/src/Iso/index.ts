@@ -78,10 +78,12 @@ export const asTraversal = <S, A>(sa: Iso<S, A>): Traversal<S, A> => ({
 /**
  * Compose an `Iso` with an `Iso`
  */
-export const compose = <A, B>(ab: Iso<A, B>) => <S>(sa: Iso<S, A>): Iso<S, B> => ({
-  get: flow(sa.get, ab.get),
-  reverseGet: flow(ab.reverseGet, sa.reverseGet)
-})
+export const compose =
+  <A, B>(ab: Iso<A, B>) =>
+  <S>(sa: Iso<S, A>): Iso<S, B> => ({
+    get: flow(sa.get, ab.get),
+    reverseGet: flow(ab.reverseGet, sa.reverseGet)
+  })
 
 // -------------------------------------------------------------------------------------
 // combinators
@@ -92,8 +94,11 @@ export const reverse = <S, A>(sa: Iso<S, A>): Iso<A, S> => ({
   reverseGet: sa.get
 })
 
-export const modify = <A>(f: (a: A) => A) => <S>(sa: Iso<S, A>) => (s: S): S =>
-  sa.reverseGet(f(sa.get(s)))
+export const modify =
+  <A>(f: (a: A) => A) =>
+  <S>(sa: Iso<S, A>) =>
+  (s: S): S =>
+    sa.reverseGet(f(sa.get(s)))
 
 // -------------------------------------------------------------------------------------
 // pipeables

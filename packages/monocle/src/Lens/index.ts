@@ -73,19 +73,23 @@ export const composePrism: <A, B>(
 /**
  * Compose a `Lens` with an `Optional`
  */
-export const composeOptional = <A, B>(ab: Optional<A, B>) => <S>(
-  sa: Lens<S, A>
-): Optional<S, B> => _.optionalComposeOptional(ab)(asOptional(sa))
+export const composeOptional =
+  <A, B>(ab: Optional<A, B>) =>
+  <S>(sa: Lens<S, A>): Optional<S, B> =>
+    _.optionalComposeOptional(ab)(asOptional(sa))
 
 // -------------------------------------------------------------------------------------
 // combinators
 // -------------------------------------------------------------------------------------
 
-export const modify = <A>(f: (a: A) => A) => <S>(sa: Lens<S, A>) => (s: S): S => {
-  const o = sa.get(s)
-  const n = f(o)
-  return o === n ? s : sa.set(n)(s)
-}
+export const modify =
+  <A>(f: (a: A) => A) =>
+  <S>(sa: Lens<S, A>) =>
+  (s: S): S => {
+    const o = sa.get(s)
+    const n = f(o)
+    return o === n ? s : sa.set(n)(s)
+  }
 
 /**
  * Return a `Optional` from a `Lens` focused on a nullable value
@@ -129,25 +133,26 @@ export const component: <A extends ReadonlyArray<unknown>, P extends keyof A>(
 /**
  * Return a `Optional` from a `Lens` focused on a `ReadonlyArray`
  */
-export const index = (i: number) => <S, A>(
-  sa: Lens<S, ReadonlyArray<A>>
-): Optional<S, A> =>
-  pipe(sa, asOptional, _.optionalComposeOptional(_.indexArray<A>().index(i)))
+export const index =
+  (i: number) =>
+  <S, A>(sa: Lens<S, ReadonlyArray<A>>): Optional<S, A> =>
+    pipe(sa, asOptional, _.optionalComposeOptional(_.indexArray<A>().index(i)))
 
 /**
  * Return a `Optional` from a `Lens` focused on a `ReadonlyRecord` and a key
  */
-export const key = (key: string) => <S, A>(
-  sa: Lens<S, Readonly<Record<string, A>>>
-): Optional<S, A> =>
-  pipe(sa, asOptional, _.optionalComposeOptional(_.indexRecord<A>().index(key)))
+export const key =
+  (key: string) =>
+  <S, A>(sa: Lens<S, Readonly<Record<string, A>>>): Optional<S, A> =>
+    pipe(sa, asOptional, _.optionalComposeOptional(_.indexRecord<A>().index(key)))
 
 /**
  * Return a `Lens` from a `Lens` focused on a `ReadonlyRecord` and a required key
  */
-export const atKey = (key: string) => <S, A>(
-  sa: Lens<S, Readonly<Record<string, A>>>
-): Lens<S, Option<A>> => pipe(sa, compose(_.atRecord<A>().at(key)))
+export const atKey =
+  (key: string) =>
+  <S, A>(sa: Lens<S, Readonly<Record<string, A>>>): Lens<S, Option<A>> =>
+    pipe(sa, compose(_.atRecord<A>().at(key)))
 
 /**
  * Return a `Optional` from a `Lens` focused on the `Some` of a `Option` type
@@ -159,21 +164,22 @@ export const some: <S, A>(soa: Lens<S, Option<A>>) => Optional<S, A> = composePr
 /**
  * Return a `Optional` from a `Lens` focused on the `Right` of a `Either` type
  */
-export const right: <S, E, A>(
-  sea: Lens<S, Either<E, A>>
-) => Optional<S, A> = composePrism(_.prismRight())
+export const right: <S, E, A>(sea: Lens<S, Either<E, A>>) => Optional<S, A> =
+  composePrism(_.prismRight())
 
 /**
  * Return a `Optional` from a `Lens` focused on the `Left` of a `Either` type
  */
-export const left: <S, E, A>(
-  sea: Lens<S, Either<E, A>>
-) => Optional<S, E> = composePrism(_.prismLeft())
+export const left: <S, E, A>(sea: Lens<S, Either<E, A>>) => Optional<S, E> =
+  composePrism(_.prismLeft())
 
 /**
  * Pipeable set
  */
-export const set = <A>(a: A) => <S>(lens: Lens<S, A>) => lens.set(a)
+export const set =
+  <A>(a: A) =>
+  <S>(lens: Lens<S, A>) =>
+    lens.set(a)
 
 /**
  * Pipeable set

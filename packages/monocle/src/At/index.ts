@@ -22,11 +22,11 @@ export interface At<S, I, A> {
 /**
  * Lift an instance of `At` using an `Iso`
  */
-export const fromIso = <T, S>(iso: Iso<T, S>) => <I, A>(
-  sia: At<S, I, A>
-): At<T, I, A> => ({
-  at: (i) => pipe(iso, _.isoAsLens, _.lensComposeLens(sia.at(i)))
-})
+export const fromIso =
+  <T, S>(iso: Iso<T, S>) =>
+  <I, A>(sia: At<S, I, A>): At<T, I, A> => ({
+    at: (i) => pipe(iso, _.isoAsLens, _.lensComposeLens(sia.at(i)))
+  })
 
 export const atRecord: <A = never>() => At<
   Readonly<Record<string, A>>,

@@ -72,11 +72,11 @@ export const compose: <A, B>(
 // combinators
 // -------------------------------------------------------------------------------------
 
-export const modify = <A>(f: (a: A) => A) => <S>(
-  sa: Traversal<S, A>
-): ((s: S) => S) => {
-  return sa.modifyF(I.Applicative)(f)
-}
+export const modify =
+  <A>(f: (a: A) => A) =>
+  <S>(sa: Traversal<S, A>): ((s: S) => S) => {
+    return sa.modifyF(I.Applicative)(f)
+  }
 
 export const set = <A>(a: A): (<S>(sa: Traversal<S, A>) => (s: S) => S) => {
   return modify(() => a)
@@ -121,26 +121,26 @@ export const component = <A extends ReadonlyArray<unknown>, P extends keyof A>(
 /**
  * Return a `Traversal` from a `Traversal` focused on a `ReadonlyArray`
  */
-export const index = (i: number) => <S, A>(
-  sa: Traversal<S, ReadonlyArray<A>>
-): Traversal<S, A> =>
-  pipe(sa, compose(_.optionalAsTraversal(_.indexArray<A>().index(i))))
+export const index =
+  (i: number) =>
+  <S, A>(sa: Traversal<S, ReadonlyArray<A>>): Traversal<S, A> =>
+    pipe(sa, compose(_.optionalAsTraversal(_.indexArray<A>().index(i))))
 
 /**
  * Return a `Traversal` from a `Traversal` focused on a `ReadonlyRecord` and a key
  */
-export const key = (key: string) => <S, A>(
-  sa: Traversal<S, Readonly<Record<string, A>>>
-): Traversal<S, A> =>
-  pipe(sa, compose(_.optionalAsTraversal(_.indexRecord<A>().index(key))))
+export const key =
+  (key: string) =>
+  <S, A>(sa: Traversal<S, Readonly<Record<string, A>>>): Traversal<S, A> =>
+    pipe(sa, compose(_.optionalAsTraversal(_.indexRecord<A>().index(key))))
 
 /**
  * Return a `Traversal` from a `Traversal` focused on a `ReadonlyRecord` and a required key
  */
-export const atKey = (key: string) => <S, A>(
-  sa: Traversal<S, Readonly<Record<string, A>>>
-): Traversal<S, Option<A>> =>
-  pipe(sa, compose(_.lensAsTraversal(_.atRecord<A>().at(key))))
+export const atKey =
+  (key: string) =>
+  <S, A>(sa: Traversal<S, Readonly<Record<string, A>>>): Traversal<S, Option<A>> =>
+    pipe(sa, compose(_.lensAsTraversal(_.atRecord<A>().at(key))))
 
 /**
  * Return a `Traversal` from a `Traversal` focused on the `Some` of a `Option` type
@@ -159,9 +159,8 @@ export const right: <S, E, A>(sea: Traversal<S, Either<E, A>>) => Traversal<S, A
 /**
  * Return a `Traversal` from a `Traversal` focused on the `Left` of a `Either` type
  */
-export const left: <S, E, A>(
-  sea: Traversal<S, Either<E, A>>
-) => Traversal<S, E> = compose(_.prismAsTraversal(_.prismLeft()))
+export const left: <S, E, A>(sea: Traversal<S, Either<E, A>>) => Traversal<S, E> =
+  compose(_.prismAsTraversal(_.prismLeft()))
 
 /**
  * Return a `Traversal` from a `Traversal` focused on a `ForEach`
@@ -179,8 +178,9 @@ export function forEach<T extends P.URIS, C = P.Auto>(
  */
 export const foldMap = <M>(M: Identity<M>) => {
   const _ = C.getApplicative(M)
-  return <A>(f: (a: A) => M) => <S>(sa: Traversal<S, A>): ((s: S) => M) =>
-    sa.modifyF(_)(f as any)
+  return <A>(f: (a: A) => M) =>
+    <S>(sa: Traversal<S, A>): ((s: S) => M) =>
+      sa.modifyF(_)(f as any)
 }
 
 /**
@@ -194,16 +194,20 @@ const unknownId = A.getIdentity<any>()
 /**
  * Get all the targets of a `Traversal`.
  */
-export const getAll = <S>(s: S) => <A>(sa: Traversal<S, A>): ReadonlyArray<A> =>
-  foldMap(unknownId)((a: A) => [a])(sa)(s)
+export const getAll =
+  <S>(s: S) =>
+  <A>(sa: Traversal<S, A>): ReadonlyArray<A> =>
+    foldMap(unknownId)((a: A) => [a])(sa)(s)
 
 const unknownIdList = L.getIdentity<any>()
 
 /**
  * Get all the targets of a `Traversal`.
  */
-export const getAllList = <S>(s: S) => <A>(sa: Traversal<S, A>): L.List<A> =>
-  foldMap(unknownIdList as Identity<L.List<A>>)(L.of as (a: A) => L.List<A>)(sa)(s)
+export const getAllList =
+  <S>(s: S) =>
+  <A>(sa: Traversal<S, A>): L.List<A> =>
+    foldMap(unknownIdList as Identity<L.List<A>>)(L.of as (a: A) => L.List<A>)(sa)(s)
 
 // -------------------------------------------------------------------------------------
 // instances
