@@ -20,6 +20,7 @@ import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"
 
 import * as _ from "../Internal"
+import { Lens } from "../Internal"
 import type { Optional } from "../Optional"
 import type { Prism } from "../Prism"
 import type { Traversal } from "../Traversal"
@@ -27,11 +28,7 @@ import type { Traversal } from "../Traversal"
 // -------------------------------------------------------------------------------------
 // model
 // -------------------------------------------------------------------------------------
-
-export interface Lens<S, A> {
-  readonly get: (s: S) => A
-  readonly set: (a: A) => (s: S) => S
-}
+export { Lens }
 
 // -------------------------------------------------------------------------------------
 // constructors
@@ -211,10 +208,8 @@ export const findFirst: <A>(
 export const imap: <A, B>(
   f: (a: A) => B,
   g: (b: B) => A
-) => <E>(sa: Lens<E, A>) => Lens<E, B> = (f, g) => (ea) => ({
-  get: flow(ea.get, f),
-  set: flow(g, ea.set)
-})
+) => <E>(sa: Lens<E, A>) => Lens<E, B> = (f, g) => (ea) =>
+  new Lens(flow(ea.get, f), flow(g, ea.set))
 
 // -------------------------------------------------------------------------------------
 // instances

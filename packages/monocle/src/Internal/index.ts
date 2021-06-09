@@ -13,19 +13,20 @@ import * as DSL from "@effect-ts/core/Prelude/DSL"
 import type { At } from "../At"
 import type { Iso } from "../Iso"
 import type { Index } from "../Ix"
-import type { Lens } from "../Lens"
 import type { Optional } from "../Optional"
 import type { Prism } from "../Prism"
 import type { Traversal } from "../Traversal"
 
+export class Lens<S, A> {
+  constructor(readonly get: (s: S) => A, readonly set: (a: A) => (s: S) => S) {}
+  [">>>"]: <B>(ab: Lens<A, B>) => Lens<S, B> = (ab) => lensComposeLens(ab)(this)
+}
 // -------------------------------------------------------------------------------------
 // Iso
 // -------------------------------------------------------------------------------------
 
-export const isoAsLens = <S, A>(sa: Iso<S, A>): Lens<S, A> => ({
-  get: sa.get,
-  set: flow(sa.reverseGet, constant)
-})
+export const isoAsLens = <S, A>(sa: Iso<S, A>): Lens<S, A> =>
+  new Lens(sa.get, flow(sa.reverseGet, constant))
 
 export const isoAsOptional = <S, A>(sa: Iso<S, A>): Optional<S, A> => ({
   getOption: flow(sa.get, O.some),
@@ -51,76 +52,77 @@ export const lensAsTraversal = <S, A>(sa: Lens<S, A>): Traversal<S, A> => ({
 
 export const lensComposeLens =
   <A, B>(ab: Lens<A, B>) =>
-  <S>(sa: Lens<S, A>): Lens<S, B> => ({
-    get: (s) => ab.get(sa.get(s)),
-    set: (b) => (s) => sa.set(ab.set(b)(sa.get(s)))(s)
-  })
+  <S>(sa: Lens<S, A>): Lens<S, B> =>
+    new Lens(
+      (s) => ab.get(sa.get(s)),
+      (b) => (s) => sa.set(ab.set(b)(sa.get(s)))(s)
+    )
 
 export const lensComposePrism =
   <A, B>(ab: Prism<A, B>) =>
   <S>(sa: Lens<S, A>): Optional<S, B> =>
     optionalComposeOptional(prismAsOptional(ab))(lensAsOptional(sa))
 
-export const lensId = <S>(): Lens<S, S> => ({
-  get: identity,
-  set: constant
-})
+export const lensId = <S>(): Lens<S, S> => new Lens(identity, constant)
 
 export const lensProp =
   <A, P extends keyof A>(prop: P) =>
-  <S>(lens: Lens<S, A>): Lens<S, A[P]> => ({
-    get: (s) => lens.get(s)[prop],
-    set: (ap) => (s) => {
-      const oa = lens.get(s)
-      if (ap === oa[prop]) {
-        return s
+  <S>(lens: Lens<S, A>): Lens<S, A[P]> =>
+    new Lens(
+      (s) => lens.get(s)[prop],
+      (ap) => (s) => {
+        const oa = lens.get(s)
+        if (ap === oa[prop]) {
+          return s
+        }
+        return lens.set(Object.assign({}, oa, { [prop]: ap }))(s)
       }
-      return lens.set(Object.assign({}, oa, { [prop]: ap }))(s)
-    }
-  })
+    )
 
 export const lensProps =
   <A, P extends keyof A>(...props: [P, P, ...Array<P>]) =>
-  <S>(lens: Lens<S, A>): Lens<S, { [K in P]: A[K] }> => ({
-    get: (s) => {
-      const a = lens.get(s)
-      const r: { [K in P]?: A[K] } = {}
-      for (const k of props) {
-        r[k] = a[k]
-      }
-      return r as any
-    },
-    set: (a) => (s) => {
-      const oa = lens.get(s)
-      const b: any = {}
-      let mod = false
-      for (const k of props) {
-        if (a[k] !== oa[k]) {
-          mod = true
-          b[k] = a[k]
+  <S>(lens: Lens<S, A>): Lens<S, { [K in P]: A[K] }> =>
+    new Lens(
+      (s) => {
+        const a = lens.get(s)
+        const r: { [K in P]?: A[K] } = {}
+        for (const k of props) {
+          r[k] = a[k]
         }
+        return r as any
+      },
+      (a) => (s) => {
+        const oa = lens.get(s)
+        const b: any = {}
+        let mod = false
+        for (const k of props) {
+          if (a[k] !== oa[k]) {
+            mod = true
+            b[k] = a[k]
+          }
+        }
+        if (mod) {
+          return lens.set(Object.assign({}, oa, b))(s)
+        }
+        return s
       }
-      if (mod) {
-        return lens.set(Object.assign({}, oa, b))(s)
-      }
-      return s
-    }
-  })
+    )
 
 export const lensComponent =
   <A extends ReadonlyArray<unknown>, P extends keyof A>(prop: P) =>
-  <S>(lens: Lens<S, A>): Lens<S, A[P]> => ({
-    get: (s) => lens.get(s)[prop],
-    set: (ap) => (s) => {
-      const oa = lens.get(s)
-      if (ap === oa[prop]) {
-        return s
+  <S>(lens: Lens<S, A>): Lens<S, A[P]> =>
+    new Lens(
+      (s) => lens.get(s)[prop],
+      (ap) => (s) => {
+        const oa = lens.get(s)
+        if (ap === oa[prop]) {
+          return s
+        }
+        const copy: A = oa.slice() as any
+        copy[prop] = ap
+        return lens.set(copy)(s)
       }
-      const copy: A = oa.slice() as any
-      copy[prop] = ap
-      return lens.set(copy)(s)
-    }
-  })
+    )
 
 // -------------------------------------------------------------------------------------
 // Prism
@@ -323,12 +325,13 @@ export function atRecord<A = never>(): At<
   O.Option<A>
 > {
   return {
-    at: (key) => ({
-      get: R.lookup(key),
-      set: O.fold(
-        () => R.deleteAt(key),
-        (a) => R.insertAt(key, a)
+    at: (key) =>
+      new Lens(
+        R.lookup(key),
+        O.fold(
+          () => R.deleteAt(key),
+          (a) => R.insertAt(key, a)
+        )
       )
-    })
   }
 }
