@@ -209,7 +209,7 @@ export const imap: <A, B>(
   f: (a: A) => B,
   g: (b: B) => A
 ) => <E>(sa: Lens<E, A>) => Lens<E, B> = (f, g) => (ea) =>
-  new Lens(flow(ea.get, f), flow(g, ea.set))
+  new Lens({ get: flow(ea.get, f), set: flow(g, ea.set) })
 
 // -------------------------------------------------------------------------------------
 // instances

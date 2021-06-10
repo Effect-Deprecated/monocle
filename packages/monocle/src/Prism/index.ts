@@ -17,29 +17,27 @@ import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"
 
 import * as _ from "../Internal"
+import { composePrism as compose, Prism } from "../Internal"
 import type { Lens } from "../Lens"
 import type { Optional } from "../Optional"
 import type { Traversal } from "../Traversal"
 
+import Option = O.Option
+
 // -------------------------------------------------------------------------------------
 // model
 // -------------------------------------------------------------------------------------
-
-import Option = O.Option
-
-export interface Prism<S, A> {
-  readonly getOption: (s: S) => Option<A>
-  readonly reverseGet: (a: A) => S
-}
+export { Prism }
 
 // -------------------------------------------------------------------------------------
 // constructors
 // -------------------------------------------------------------------------------------
 
-export const id = <S>(): Prism<S, S> => ({
-  getOption: O.some,
-  reverseGet: identity
-})
+export const id = <S>(): Prism<S, S> =>
+  new Prism({
+    getOption: O.some,
+    reverseGet: identity
+  })
 
 export const fromPredicate: {
   <S, A extends S>(refinement: Refinement<S, A>): Prism<S, A>
@@ -65,15 +63,7 @@ export const asTraversal: <S, A>(sa: Prism<S, A>) => Traversal<S, A> =
 // compositions
 // -------------------------------------------------------------------------------------
 
-/**
- * Compose a `Prism` with a `Prism`
- */
-export const compose =
-  <A, B>(ab: Prism<A, B>) =>
-  <S>(sa: Prism<S, A>): Prism<S, B> => ({
-    getOption: flow(sa.getOption, O.chain(ab.getOption)),
-    reverseGet: flow(ab.reverseGet, sa.reverseGet)
-  })
+export { compose }
 
 /**
  * Compose a `Prism` with a `Lens`
@@ -213,10 +203,11 @@ export const findFirst: <A>(
 export const imap: <A, B>(
   f: (a: A) => B,
   g: (b: B) => A
-) => <E>(sa: Prism<E, A>) => Prism<E, B> = (f, g) => (ea) => ({
-  getOption: flow(ea.getOption, O.map(f)),
-  reverseGet: flow(g, ea.reverseGet)
-})
+) => <E>(sa: Prism<E, A>) => Prism<E, B> = (f, g) => (ea) =>
+  new Prism({
+    getOption: flow(ea.getOption, O.map(f)),
+    reverseGet: flow(g, ea.reverseGet)
+  })
 
 // -------------------------------------------------------------------------------------
 // instances
@@ -246,8 +237,8 @@ export const Invariant = P.instance<P.Invariant<[URI<PrismURI>]>>({
 export function newtype<T extends Newtype<any, any>>(
   getOption: (_: T["_A"]) => boolean
 ): Prism<T["_A"], T> {
-  return {
+  return new Prism({
     getOption: (_) => (getOption(_) ? O.some(_) : O.none),
     reverseGet: (_) => _ as any
-  }
+  })
 }

@@ -17,7 +17,7 @@ import * as P from "@effect-ts/core/Prelude"
 import * as _ from "../Internal"
 import type { Lens } from "../Lens"
 import type { Optional } from "../Optional"
-import type { Prism } from "../Prism"
+import { Prism } from "../Prism"
 import type { Traversal } from "../Traversal"
 
 // -------------------------------------------------------------------------------------
@@ -50,10 +50,11 @@ export const asLens: <S, A>(sa: Iso<S, A>) => Lens<S, A> = _.isoAsLens
 /**
  * View an `Iso` as a `Prism`
  */
-export const asPrism = <S, A>(sa: Iso<S, A>): Prism<S, A> => ({
-  getOption: flow(sa.get, O.some),
-  reverseGet: sa.reverseGet
-})
+export const asPrism = <S, A>(sa: Iso<S, A>): Prism<S, A> =>
+  new Prism({
+    getOption: flow(sa.get, O.some),
+    reverseGet: sa.reverseGet
+  })
 
 /**
  * View an `Iso` as a `Optional`
