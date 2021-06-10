@@ -10,33 +10,37 @@
  */
 import { flow, identity, pipe } from "@effect-ts/core/Function"
 import type { Newtype } from "@effect-ts/core/Newtype"
-import * as O from "@effect-ts/core/Option"
 import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"
 
 import * as _ from "../Internal"
+import { Iso, isoAsPrism as asPrism, isoComposeIso as compose } from "../Internal"
 import type { Lens } from "../Lens"
 import type { Optional } from "../Optional"
-import { Prism } from "../Prism"
 import type { Traversal } from "../Traversal"
 
 // -------------------------------------------------------------------------------------
 // model
 // -------------------------------------------------------------------------------------
-
-export interface Iso<S, A> {
-  readonly get: (s: S) => A
-  readonly reverseGet: (a: A) => S
-}
+export { Iso }
+/**
+ * View an `Iso` as a `Prism`
+ */
+export { asPrism }
+// -------------------------------------------------------------------------------------
+// compositions
+// -------------------------------------------------------------------------------------
+export { compose }
 
 // -------------------------------------------------------------------------------------
 // constructors
 // -------------------------------------------------------------------------------------
 
-export const id = <S>(): Iso<S, S> => ({
-  get: identity,
-  reverseGet: identity
-})
+export const id = <S>(): Iso<S, S> =>
+  new Iso({
+    get: identity,
+    reverseGet: identity
+  })
 
 // -------------------------------------------------------------------------------------
 // converters
@@ -46,15 +50,6 @@ export const id = <S>(): Iso<S, S> => ({
  * View an `Iso` as a `Lens`
  */
 export const asLens: <S, A>(sa: Iso<S, A>) => Lens<S, A> = _.isoAsLens
-
-/**
- * View an `Iso` as a `Prism`
- */
-export const asPrism = <S, A>(sa: Iso<S, A>): Prism<S, A> =>
-  new Prism({
-    getOption: flow(sa.get, O.some),
-    reverseGet: sa.reverseGet
-  })
 
 /**
  * View an `Iso` as a `Optional`
@@ -73,27 +68,14 @@ export const asTraversal = <S, A>(sa: Iso<S, A>): Traversal<S, A> => ({
 })
 
 // -------------------------------------------------------------------------------------
-// compositions
-// -------------------------------------------------------------------------------------
-
-/**
- * Compose an `Iso` with an `Iso`
- */
-export const compose =
-  <A, B>(ab: Iso<A, B>) =>
-  <S>(sa: Iso<S, A>): Iso<S, B> => ({
-    get: flow(sa.get, ab.get),
-    reverseGet: flow(ab.reverseGet, sa.reverseGet)
-  })
-
-// -------------------------------------------------------------------------------------
 // combinators
 // -------------------------------------------------------------------------------------
 
-export const reverse = <S, A>(sa: Iso<S, A>): Iso<A, S> => ({
-  get: sa.reverseGet,
-  reverseGet: sa.get
-})
+export const reverse = <S, A>(sa: Iso<S, A>): Iso<A, S> =>
+  new Iso({
+    get: sa.reverseGet,
+    reverseGet: sa.get
+  })
 
 export const modify =
   <A>(f: (a: A) => A) =>
@@ -108,10 +90,11 @@ export const modify =
 export const imap: <A, B>(
   f: (a: A) => B,
   g: (b: B) => A
-) => <S>(sa: Iso<S, A>) => Iso<S, B> = (f, g) => (ea) => ({
-  get: flow(ea.get, f),
-  reverseGet: flow(g, ea.reverseGet)
-})
+) => <S>(sa: Iso<S, A>) => Iso<S, B> = (f, g) => (ea) =>
+  new Iso({
+    get: flow(ea.get, f),
+    reverseGet: flow(g, ea.reverseGet)
+  })
 
 // -------------------------------------------------------------------------------------
 // instances
@@ -139,8 +122,8 @@ export const Invariant = P.instance<P.Invariant<[URI<IsoURI>]>>({
 })
 
 export function newtype<T extends Newtype<any, any>>(): Iso<T["_A"], T> {
-  return {
+  return new Iso({
     get: (_) => _ as any,
     reverseGet: (_) => _ as any
-  }
+  })
 }

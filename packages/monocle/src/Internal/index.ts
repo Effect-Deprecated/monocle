@@ -13,7 +13,6 @@ import * as DSL from "@effect-ts/core/Prelude/DSL"
 import { matchTag_ } from "@effect-ts/system/Utils"
 
 import type { At } from "../At"
-import type { Iso } from "../Iso"
 import type { Index } from "../Ix"
 import type { Traversal } from "../Traversal"
 
@@ -22,12 +21,14 @@ export class Lens<S, A> extends Tagged("Lens")<{
   readonly set: (a: A) => (s: S) => S
 }> {
   readonly [">>>"]: {
+    <B>(ab: Iso<A, B>): Lens<S, B>
     <B>(ab: Lens<A, B>): Lens<S, B>
     <B>(ab: Prism<A, B>): Optional<S, B>
     <B>(ab: Optional<A, B>): Optional<S, B>
   } = (ab) =>
     // @ts-expect-error
     matchTag_(ab, {
+      Iso: (ab) => lensComposeLens(isoAsLens(ab))(this),
       Lens: (ab) => lensComposeLens(ab)(this),
       Optional: (ab) => optionalComposeOptional(ab)(lensAsOptional(this)),
       Prism: (ab) => lensComposePrism(ab)(this)
@@ -39,12 +40,14 @@ export class Prism<S, A> extends Tagged("Prism")<{
   readonly reverseGet: (a: A) => S
 }> {
   readonly [">>>"]: {
+    <B>(ab: Iso<A, B>): Prism<S, B>
     <B>(ab: Lens<A, B>): Optional<S, B>
     <B>(ab: Prism<A, B>): Prism<S, B>
     <B>(ab: Optional<A, B>): Optional<S, B>
   } = (ab) =>
     //@ts-expect-error
     matchTag_(ab, {
+      Iso: (ab) => composePrism(isoAsPrism(ab))(this),
       Lens: (ab) => prismComposeLens(ab)(this),
       Optional: (ab) => optionalComposeOptional(ab)(prismAsOptional(this)),
       Prism: (ab) => composePrism(ab)(this)
@@ -56,15 +59,36 @@ export class Optional<S, A> extends Tagged("Optional")<{
   readonly set: (a: A) => (s: S) => S
 }> {
   readonly [">>>"]: {
+    <B>(ab: Iso<A, B>): Optional<S, B>
     <B>(ab: Lens<A, B>): Optional<S, B>
     <B>(ab: Prism<A, B>): Optional<S, B>
     <B>(ab: Optional<A, B>): Optional<S, B>
   } = (ab) =>
     // @ts-expect-error
     matchTag_(ab, {
+      Iso: (ab) => optionalComposeOptional(isoAsOptional(ab))(this),
       Lens: (ab) => optionalComposeOptional(lensAsOptional(ab))(this),
       Optional: (ab) => optionalComposeOptional(ab)(this),
       Prism: (ab) => optionalComposeOptional(prismAsOptional(ab))(this)
+    })
+}
+
+export class Iso<S, A> extends Tagged("Iso")<{
+  readonly get: (s: S) => A
+  readonly reverseGet: (a: A) => S
+}> {
+  readonly [">>>"]: {
+    <B>(ab: Iso<A, B>): Iso<S, B>
+    <B>(ab: Lens<A, B>): Lens<S, B>
+    <B>(ab: Prism<A, B>): Prism<S, B>
+    <B>(ab: Optional<A, B>): Optional<S, B>
+  } = (ab) =>
+    // @ts-expect-error
+    matchTag_(ab, {
+      Iso: (ab) => isoComposeIso(ab)(this),
+      Lens: (ab) => lensComposeLens(ab)(isoAsLens(this)),
+      Optional: (ab) => optionalComposeOptional(ab)(isoAsOptional(this)),
+      Prism: (ab) => composePrism(ab)(isoAsPrism(this))
     })
 }
 
@@ -79,6 +103,26 @@ export const isoAsOptional = <S, A>(sa: Iso<S, A>): Optional<S, A> =>
   new Optional({
     getOption: flow(sa.get, O.some),
     set: flow(sa.reverseGet, constant)
+  })
+
+/**
+ * Compose an `Iso` with an `Iso`
+ */
+export const isoComposeIso =
+  <A, B>(ab: Iso<A, B>) =>
+  <S>(sa: Iso<S, A>): Iso<S, B> =>
+    new Iso({
+      get: flow(sa.get, ab.get),
+      reverseGet: flow(ab.reverseGet, sa.reverseGet)
+    })
+
+/**
+ * View an `Iso` as a `Prism`
+ */
+export const isoAsPrism = <S, A>(sa: Iso<S, A>): Prism<S, A> =>
+  new Prism({
+    getOption: flow(sa.get, O.some),
+    reverseGet: sa.reverseGet
   })
 
 // -------------------------------------------------------------------------------------
