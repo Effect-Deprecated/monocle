@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.34.0](https://github.com/Effect-TS/monocle/compare/@effect-ts/monocle@0.33.0...@effect-ts/monocle@0.34.0) (2021-06-10)
+
+
+### Bug Fixes
+
+* **monocle:** fix typo ([16adf10](https://github.com/Effect-TS/monocle/commit/16adf108bfda4dfb7741374c7a860e907c293566))
+
+
+### Features
+
+* **monocle:** compose iso ([71be87f](https://github.com/Effect-TS/monocle/commit/71be87f76c71d91ff1b4e0ec74b13e63d8fb05d9))
+* **monocle:** composition with optionals ([2909c82](https://github.com/Effect-TS/monocle/commit/2909c8260e018a2b70b299a7650e5bc9afb29853))
+* **monocle:** composition with traversal ([f0033a7](https://github.com/Effect-TS/monocle/commit/f0033a7f70bf870d008d7d234cf51016c9e3cc54))
+* **monocle:** Use Lens class with built-in compose >>> ([fa8d5ad](https://github.com/Effect-TS/monocle/commit/fa8d5adfa33cac256a97f8a0fda3639a7717b7ba))
+* **monocle:** work on compose ([4e2b700](https://github.com/Effect-TS/monocle/commit/4e2b7009f8b334b9d1ff8bffd63e19ea14231150))
+
+
+
+
+
 # [0.33.0](https://github.com/Effect-TS/monocle/compare/@effect-ts/monocle@0.32.0...@effect-ts/monocle@0.33.0) (2021-05-30)
 
 **Note:** Version bump only for package @effect-ts/monocle
