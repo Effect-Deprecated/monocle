@@ -10,6 +10,7 @@ import { constant, flow, identity, pipe } from "@effect-ts/core/Function"
 import * as O from "@effect-ts/core/Option"
 import type * as P from "@effect-ts/core/Prelude"
 import * as DSL from "@effect-ts/core/Prelude/DSL"
+import { matchTag_ } from "@effect-ts/system/Utils"
 
 import type { At } from "../At"
 import type { Iso } from "../Iso"
@@ -26,11 +27,11 @@ export class Lens<S, A> extends Tagged("Lens")<{
     <B>(ab: Optional<A, B>): Optional<S, B>
   } = (ab) =>
     // @ts-expect-error
-    ab instanceof Lens
-      ? lensComposeLens(ab)(this)
-      : ab instanceof Prism
-      ? lensComposePrism(ab)(this)
-      : optionalComposeOptional(ab)(lensAsOptional(this))
+    matchTag_(ab, {
+      Lens: (ab) => lensComposeLens(ab)(this),
+      Optional: (ab) => optionalComposeOptional(ab)(lensAsOptional(this)),
+      Prism: (ab) => lensComposePrism(ab)(this)
+    })
 }
 
 export class Prism<S, A> extends Tagged("Prism")<{
@@ -38,16 +39,16 @@ export class Prism<S, A> extends Tagged("Prism")<{
   readonly reverseGet: (a: A) => S
 }> {
   readonly [">>>"]: {
-    <B>(ab: Prism<A, B>): Prism<S, B>
     <B>(ab: Lens<A, B>): Optional<S, B>
+    <B>(ab: Prism<A, B>): Prism<S, B>
     <B>(ab: Optional<A, B>): Optional<S, B>
   } = (ab) =>
-    // @ts-expect-error
-    ab instanceof Lens
-      ? prismComposeLens(ab)(this)
-      : ab instanceof Prism
-      ? composePrism(ab)(this)
-      : optionalComposeOptional(ab)(prismAsOptional(this))
+    //@ts-expect-error
+    matchTag_(ab, {
+      Lens: (ab) => prismComposeLens(ab)(this),
+      Optional: (ab) => optionalComposeOptional(ab)(prismAsOptional(this)),
+      Prism: (ab) => composePrism(ab)(this)
+    })
 }
 
 export class Optional<S, A> extends Tagged("Optional")<{
@@ -55,15 +56,16 @@ export class Optional<S, A> extends Tagged("Optional")<{
   readonly set: (a: A) => (s: S) => S
 }> {
   readonly [">>>"]: {
-    <B>(ab: Optional<A, B>): Optional<S, B>
-    <B>(ab: Prism<A, B>): Optional<S, B>
     <B>(ab: Lens<A, B>): Optional<S, B>
+    <B>(ab: Prism<A, B>): Optional<S, B>
+    <B>(ab: Optional<A, B>): Optional<S, B>
   } = (ab) =>
-    ab instanceof Lens
-      ? optionalComposeOptional(lensAsOptional(ab))(this)
-      : ab instanceof Optional
-      ? optionalComposeOptional(ab)(this)
-      : optionalComposeOptional(prismAsOptional(ab))(this)
+    // @ts-expect-error
+    matchTag_(ab, {
+      Lens: (ab) => optionalComposeOptional(lensAsOptional(ab))(this),
+      Optional: (ab) => optionalComposeOptional(ab)(this),
+      Prism: (ab) => optionalComposeOptional(prismAsOptional(ab))(this)
+    })
 }
 
 // -------------------------------------------------------------------------------------
