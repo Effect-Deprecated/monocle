@@ -17,7 +17,7 @@ import type { Index } from "../Ix"
 import type { Optional } from "../Optional"
 import type { Traversal } from "../Traversal"
 
-export class Lens<S, A> extends Tagged("Lend")<{
+export class Lens<S, A> extends Tagged("Lens")<{
   readonly get: (s: S) => A
   readonly set: (a: A) => (s: S) => S
 }> {
