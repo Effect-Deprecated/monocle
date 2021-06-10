@@ -8,16 +8,20 @@
  * 1. reverseGet(get(s)) = s
  * 2. get(reversetGet(a)) = a
  */
-import { flow, identity, pipe } from "@effect-ts/core/Function"
+import { flow, identity } from "@effect-ts/core/Function"
 import type { Newtype } from "@effect-ts/core/Newtype"
 import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"
 
 import * as _ from "../Internal"
-import { Iso, isoAsPrism as asPrism, isoComposeIso as compose } from "../Internal"
+import {
+  Iso,
+  isoAsPrism as asPrism,
+  isoAsTraversal as asTraversal,
+  isoComposeIso as compose
+} from "../Internal"
 import type { Lens } from "../Lens"
 import type { Optional } from "../Optional"
-import type { Traversal } from "../Traversal"
 
 // -------------------------------------------------------------------------------------
 // model
@@ -31,6 +35,10 @@ export { asPrism }
 // compositions
 // -------------------------------------------------------------------------------------
 export { compose }
+/**
+ * View an `Iso` as a `Traversal`
+ */
+export { asTraversal }
 
 // -------------------------------------------------------------------------------------
 // constructors
@@ -55,17 +63,6 @@ export const asLens: <S, A>(sa: Iso<S, A>) => Lens<S, A> = _.isoAsLens
  * View an `Iso` as a `Optional`
  */
 export const asOptional: <S, A>(sa: Iso<S, A>) => Optional<S, A> = _.isoAsOptional
-
-/**
- * View an `Iso` as a `Traversal`
- */
-export const asTraversal = <S, A>(sa: Iso<S, A>): Traversal<S, A> => ({
-  modifyF: (F) => (f) => (s) =>
-    pipe(
-      f(sa.get(s)),
-      F.map((a) => sa.reverseGet(a))
-    )
-})
 
 // -------------------------------------------------------------------------------------
 // combinators

@@ -14,7 +14,6 @@ import { matchTag_ } from "@effect-ts/system/Utils"
 
 import type { At } from "../At"
 import type { Index } from "../Ix"
-import type { Traversal } from "../Traversal"
 
 export class Lens<S, A> extends Tagged("Lens")<{
   readonly get: (s: S) => A
@@ -25,13 +24,15 @@ export class Lens<S, A> extends Tagged("Lens")<{
     <B>(ab: Lens<A, B>): Lens<S, B>
     <B>(ab: Prism<A, B>): Optional<S, B>
     <B>(ab: Optional<A, B>): Optional<S, B>
+    <B>(ab: Traversal<A, B>): Traversal<S, B>
   } = (ab) =>
     // @ts-expect-error
     matchTag_(ab, {
       Iso: (ab) => lensComposeLens(isoAsLens(ab))(this),
       Lens: (ab) => lensComposeLens(ab)(this),
       Optional: (ab) => optionalComposeOptional(ab)(lensAsOptional(this)),
-      Prism: (ab) => lensComposePrism(ab)(this)
+      Prism: (ab) => lensComposePrism(ab)(this),
+      Traversal: (ab) => traversalComposeTraversal(ab)(lensAsTraversal(this))
     })
 }
 
@@ -44,13 +45,15 @@ export class Prism<S, A> extends Tagged("Prism")<{
     <B>(ab: Lens<A, B>): Optional<S, B>
     <B>(ab: Prism<A, B>): Prism<S, B>
     <B>(ab: Optional<A, B>): Optional<S, B>
+    <B>(ab: Traversal<A, B>): Traversal<S, B>
   } = (ab) =>
     //@ts-expect-error
     matchTag_(ab, {
       Iso: (ab) => composePrism(isoAsPrism(ab))(this),
       Lens: (ab) => prismComposeLens(ab)(this),
       Optional: (ab) => optionalComposeOptional(ab)(prismAsOptional(this)),
-      Prism: (ab) => composePrism(ab)(this)
+      Prism: (ab) => composePrism(ab)(this),
+      Traversal: (ab) => traversalComposeTraversal(ab)(prismAsTraversal(this))
     })
 }
 
@@ -63,13 +66,15 @@ export class Optional<S, A> extends Tagged("Optional")<{
     <B>(ab: Lens<A, B>): Optional<S, B>
     <B>(ab: Prism<A, B>): Optional<S, B>
     <B>(ab: Optional<A, B>): Optional<S, B>
+    <B>(ab: Traversal<A, B>): Traversal<S, B>
   } = (ab) =>
     // @ts-expect-error
     matchTag_(ab, {
       Iso: (ab) => optionalComposeOptional(isoAsOptional(ab))(this),
       Lens: (ab) => optionalComposeOptional(lensAsOptional(ab))(this),
       Optional: (ab) => optionalComposeOptional(ab)(this),
-      Prism: (ab) => optionalComposeOptional(prismAsOptional(ab))(this)
+      Prism: (ab) => optionalComposeOptional(prismAsOptional(ab))(this),
+      Traversal: (ab) => traversalComposeTraversal(ab)(optionalAsTraversal(this))
     })
 }
 
@@ -82,13 +87,50 @@ export class Iso<S, A> extends Tagged("Iso")<{
     <B>(ab: Lens<A, B>): Lens<S, B>
     <B>(ab: Prism<A, B>): Prism<S, B>
     <B>(ab: Optional<A, B>): Optional<S, B>
+    <B>(ab: Traversal<A, B>): Traversal<S, B>
   } = (ab) =>
     // @ts-expect-error
     matchTag_(ab, {
       Iso: (ab) => isoComposeIso(ab)(this),
       Lens: (ab) => lensComposeLens(ab)(isoAsLens(this)),
       Optional: (ab) => optionalComposeOptional(ab)(isoAsOptional(this)),
-      Prism: (ab) => composePrism(ab)(isoAsPrism(this))
+      Prism: (ab) => composePrism(ab)(isoAsPrism(this)),
+      Traversal: (ab) => traversalComposeTraversal(ab)(isoAsTraversal(this))
+    })
+}
+
+export interface ModifyF<S, A> {
+  <F extends P.URIS, C = P.Auto>(F: P.Applicative<F, C>): <
+    FK,
+    FQ,
+    FW,
+    FX,
+    FI,
+    FS,
+    FR,
+    FE
+  >(
+    f: (a: A) => P.Kind<F, C, FK, FQ, FW, FX, FI, FS, FR, FE, A>
+  ) => (s: S) => P.Kind<F, C, FK, FQ, FW, FX, FI, FS, FR, FE, S>
+}
+
+export class Traversal<S, A> extends Tagged("Traversal")<{
+  readonly modifyF: ModifyF<S, A>
+}> {
+  readonly [">>>"]: {
+    <B>(ab: Iso<A, B>): Traversal<S, B>
+    <B>(ab: Lens<A, B>): Traversal<S, B>
+    <B>(ab: Prism<A, B>): Traversal<S, B>
+    <B>(ab: Optional<A, B>): Traversal<S, B>
+    <B>(ab: Traversal<A, B>): Traversal<S, B>
+  } = (ab) =>
+    // @ts-expect-error
+    matchTag_(ab, {
+      Iso: (ab) => traversalComposeTraversal(isoAsTraversal(ab))(this),
+      Lens: (ab) => traversalComposeTraversal(lensAsTraversal(ab))(this),
+      Optional: (ab) => traversalComposeTraversal(optionalAsTraversal(ab))(this),
+      Prism: (ab) => traversalComposeTraversal(prismAsTraversal(ab))(this),
+      Traversal: (ab) => traversalComposeTraversal(ab)(this)
     })
 }
 
@@ -125,6 +167,15 @@ export const isoAsPrism = <S, A>(sa: Iso<S, A>): Prism<S, A> =>
     reverseGet: sa.reverseGet
   })
 
+export const isoAsTraversal = <S, A>(sa: Iso<S, A>): Traversal<S, A> =>
+  new Traversal({
+    modifyF: (F) => (f) => (s) =>
+      pipe(
+        f(sa.get(s)),
+        F.map((a) => sa.reverseGet(a))
+      )
+  })
+
 // -------------------------------------------------------------------------------------
 // Lens
 // -------------------------------------------------------------------------------------
@@ -135,13 +186,14 @@ export const lensAsOptional = <S, A>(sa: Lens<S, A>): Optional<S, A> =>
     set: sa.set
   })
 
-export const lensAsTraversal = <S, A>(sa: Lens<S, A>): Traversal<S, A> => ({
-  modifyF: (F) => (f) => (s) =>
-    pipe(
-      f(sa.get(s)),
-      F.map((a) => sa.set(a)(s))
-    )
-})
+export const lensAsTraversal = <S, A>(sa: Lens<S, A>): Traversal<S, A> =>
+  new Traversal({
+    modifyF: (F) => (f) => (s) =>
+      pipe(
+        f(sa.get(s)),
+        F.map((a) => sa.set(a)(s))
+      )
+  })
 
 export const lensComposeLens =
   <A, B>(ab: Lens<A, B>) =>
@@ -227,17 +279,18 @@ export const prismAsOptional = <S, A>(sa: Prism<S, A>): Optional<S, A> =>
     set: (a) => prismSet(a)(sa)
   })
 
-export const prismAsTraversal = <S, A>(sa: Prism<S, A>): Traversal<S, A> => ({
-  modifyF: (F) => {
-    const succeed = DSL.succeedF(F)
-    return (f) => (s) =>
-      O.fold_(
-        sa.getOption(s),
-        () => succeed(s),
-        (a) => F.map<A, S>((a) => prismSet(a)(sa)(s))(f(a))
-      )
-  }
-})
+export const prismAsTraversal = <S, A>(sa: Prism<S, A>): Traversal<S, A> =>
+  new Traversal({
+    modifyF: (F) => {
+      const succeed = DSL.succeedF(F)
+      return (f) => (s) =>
+        O.fold_(
+          sa.getOption(s),
+          () => succeed(s),
+          (a) => F.map<A, S>((a) => prismSet(a)(sa)(s))(f(a))
+        )
+    }
+  })
 
 export const prismModifyOption =
   <A>(f: (a: A) => A) =>
@@ -309,17 +362,18 @@ export const composePrism =
       reverseGet: flow(ab.reverseGet, sa.reverseGet)
     })
 
-export const optionalAsTraversal = <S, A>(sa: Optional<S, A>): Traversal<S, A> => ({
-  modifyF: (F) => (f) => {
-    const succeed = DSL.succeedF(F)
-    return (s) =>
-      O.fold_(
-        sa.getOption(s),
-        () => succeed(s),
-        (a) => F.map<A, S>((a: A) => sa.set(a)(s))(f(a))
-      )
-  }
-})
+export const optionalAsTraversal = <S, A>(sa: Optional<S, A>): Traversal<S, A> =>
+  new Traversal({
+    modifyF: (F) => (f) => {
+      const succeed = DSL.succeedF(F)
+      return (s) =>
+        O.fold_(
+          sa.getOption(s),
+          () => succeed(s),
+          (a) => F.map<A, S>((a: A) => sa.set(a)(s))(f(a))
+        )
+    }
+  })
 
 export const optionalModifyOption =
   <A>(f: (a: A) => A) =>
@@ -366,9 +420,10 @@ export const findFirst: <A>(predicate: Predicate<A>) => Optional<ReadonlyArray<A
 export function traversalComposeTraversal<A, B>(
   ab: Traversal<A, B>
 ): <S>(sa: Traversal<S, A>) => Traversal<S, B> {
-  return (sa) => ({
-    modifyF: (F) => (f) => sa.modifyF(F)(ab.modifyF(F)(f))
-  })
+  return (sa) =>
+    new Traversal({
+      modifyF: (F) => (f) => sa.modifyF(F)(ab.modifyF(F)(f))
+    })
 }
 
 export function fromForEach<T extends P.URIS, C = P.Auto>(
@@ -387,9 +442,10 @@ export function fromForEach<T extends P.URIS, C = P.Auto>(
 export function fromForEach<T>(
   T: P.ForEach<P.UHKT<T>>
 ): <A>() => Traversal<P.HKT<T, A>, A> {
-  return <A>(): Traversal<P.HKT<T, A>, A> => ({
-    modifyF: T.forEachF
-  })
+  return <A>(): Traversal<P.HKT<T, A>, A> =>
+    new Traversal<P.HKT<T, A>, A>({
+      modifyF: T.forEachF
+    })
 }
 
 // -------------------------------------------------------------------------------------

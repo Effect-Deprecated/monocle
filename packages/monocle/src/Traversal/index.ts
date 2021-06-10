@@ -20,37 +20,21 @@ import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"
 
 import * as _ from "../Internal"
+import { ModifyF, Traversal } from "../Internal"
 
 // -------------------------------------------------------------------------------------
 // model
 // -------------------------------------------------------------------------------------
-
-export interface ModifyF<S, A> {
-  <F extends P.URIS, C = P.Auto>(F: P.Applicative<F, C>): <
-    FK,
-    FQ,
-    FW,
-    FX,
-    FI,
-    FS,
-    FR,
-    FE
-  >(
-    f: (a: A) => P.Kind<F, C, FK, FQ, FW, FX, FI, FS, FR, FE, A>
-  ) => (s: S) => P.Kind<F, C, FK, FQ, FW, FX, FI, FS, FR, FE, S>
-}
-
-export interface Traversal<S, A> {
-  readonly modifyF: ModifyF<S, A>
-}
+export { ModifyF, Traversal }
 
 // -------------------------------------------------------------------------------------
 // constructors
 // -------------------------------------------------------------------------------------
 
-export const id = <S>(): Traversal<S, S> => ({
-  modifyF: (_) => (f) => f
-})
+export const id = <S>(): Traversal<S, S> =>
+  new Traversal({
+    modifyF: (_) => (f) => f
+  })
 
 /**
  * Create a `Traversal` from a `ForEach`
