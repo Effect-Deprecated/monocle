@@ -21,6 +21,7 @@ import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"
 
 import * as _ from "../Internal"
+import { Optional } from "../Internal"
 import type { Traversal } from "../Traversal"
 
 // -------------------------------------------------------------------------------------
@@ -29,19 +30,17 @@ import type { Traversal } from "../Traversal"
 
 import Option = O.Option
 
-export interface Optional<S, A> {
-  readonly getOption: (s: S) => Option<A>
-  readonly set: (a: A) => (s: S) => S
-}
+export { Optional }
 
 // -------------------------------------------------------------------------------------
 // constructors
 // -------------------------------------------------------------------------------------
 
-export const id = <S>(): Optional<S, S> => ({
-  getOption: O.some,
-  set: constant
-})
+export const id = <S>(): Optional<S, S> =>
+  new Optional({
+    getOption: O.some,
+    set: constant
+  })
 
 // -------------------------------------------------------------------------------------
 // converters
@@ -186,10 +185,11 @@ export const findFirst: <A>(
 export const imap: <A, B>(
   f: (a: A) => B,
   g: (b: B) => A
-) => <E>(fa: Optional<E, A>) => Optional<E, B> = (f, g) => (ea) => ({
-  getOption: flow(ea.getOption, O.map(f)),
-  set: flow(g, ea.set)
-})
+) => <E>(fa: Optional<E, A>) => Optional<E, B> = (f, g) => (ea) =>
+  new Optional({
+    getOption: flow(ea.getOption, O.map(f)),
+    set: flow(g, ea.set)
+  })
 
 // -------------------------------------------------------------------------------------
 // instances

@@ -14,7 +14,6 @@ import * as DSL from "@effect-ts/core/Prelude/DSL"
 import type { At } from "../At"
 import type { Iso } from "../Iso"
 import type { Index } from "../Ix"
-import type { Optional } from "../Optional"
 import type { Traversal } from "../Traversal"
 
 export class Lens<S, A> extends Tagged("Lens")<{
@@ -24,9 +23,14 @@ export class Lens<S, A> extends Tagged("Lens")<{
   readonly [">>>"]: {
     <B>(ab: Lens<A, B>): Lens<S, B>
     <B>(ab: Prism<A, B>): Optional<S, B>
+    <B>(ab: Optional<A, B>): Optional<S, B>
   } = (ab) =>
     // @ts-expect-error
-    ab instanceof Lens ? lensComposeLens(ab)(this) : lensComposePrism(ab)(this)
+    ab instanceof Lens
+      ? lensComposeLens(ab)(this)
+      : ab instanceof Prism
+      ? lensComposePrism(ab)(this)
+      : optionalComposeOptional(ab)(lensAsOptional(this))
 }
 
 export class Prism<S, A> extends Tagged("Prism")<{
@@ -36,9 +40,30 @@ export class Prism<S, A> extends Tagged("Prism")<{
   readonly [">>>"]: {
     <B>(ab: Prism<A, B>): Prism<S, B>
     <B>(ab: Lens<A, B>): Optional<S, B>
+    <B>(ab: Optional<A, B>): Optional<S, B>
   } = (ab) =>
     // @ts-expect-error
-    ab instanceof Lens ? prismComposeLens(ab)(this) : composePrism(ab)(this)
+    ab instanceof Lens
+      ? prismComposeLens(ab)(this)
+      : ab instanceof Prism
+      ? composePrism(ab)(this)
+      : optionalComposeOptional(ab)(prismAsOptional(this))
+}
+
+export class Optional<S, A> extends Tagged("Optional")<{
+  readonly getOption: (s: S) => O.Option<A>
+  readonly set: (a: A) => (s: S) => S
+}> {
+  readonly [">>>"]: {
+    <B>(ab: Optional<A, B>): Optional<S, B>
+    <B>(ab: Prism<A, B>): Optional<S, B>
+    <B>(ab: Lens<A, B>): Optional<S, B>
+  } = (ab) =>
+    ab instanceof Lens
+      ? optionalComposeOptional(lensAsOptional(ab))(this)
+      : ab instanceof Optional
+      ? optionalComposeOptional(ab)(this)
+      : optionalComposeOptional(prismAsOptional(ab))(this)
 }
 
 // -------------------------------------------------------------------------------------
@@ -48,19 +73,21 @@ export class Prism<S, A> extends Tagged("Prism")<{
 export const isoAsLens = <S, A>(sa: Iso<S, A>): Lens<S, A> =>
   new Lens({ get: sa.get, set: flow(sa.reverseGet, constant) })
 
-export const isoAsOptional = <S, A>(sa: Iso<S, A>): Optional<S, A> => ({
-  getOption: flow(sa.get, O.some),
-  set: flow(sa.reverseGet, constant)
-})
+export const isoAsOptional = <S, A>(sa: Iso<S, A>): Optional<S, A> =>
+  new Optional({
+    getOption: flow(sa.get, O.some),
+    set: flow(sa.reverseGet, constant)
+  })
 
 // -------------------------------------------------------------------------------------
 // Lens
 // -------------------------------------------------------------------------------------
 
-export const lensAsOptional = <S, A>(sa: Lens<S, A>): Optional<S, A> => ({
-  getOption: flow(sa.get, O.some),
-  set: sa.set
-})
+export const lensAsOptional = <S, A>(sa: Lens<S, A>): Optional<S, A> =>
+  new Optional({
+    getOption: flow(sa.get, O.some),
+    set: sa.set
+  })
 
 export const lensAsTraversal = <S, A>(sa: Lens<S, A>): Traversal<S, A> => ({
   modifyF: (F) => (f) => (s) =>
@@ -148,10 +175,11 @@ export const lensComponent =
 // Prism
 // -------------------------------------------------------------------------------------
 
-export const prismAsOptional = <S, A>(sa: Prism<S, A>): Optional<S, A> => ({
-  getOption: sa.getOption,
-  set: (a) => prismSet(a)(sa)
-})
+export const prismAsOptional = <S, A>(sa: Prism<S, A>): Optional<S, A> =>
+  new Optional({
+    getOption: sa.getOption,
+    set: (a) => prismSet(a)(sa)
+  })
 
 export const prismAsTraversal = <S, A>(sa: Prism<S, A>): Traversal<S, A> => ({
   modifyF: (F) => {
@@ -265,20 +293,22 @@ export const optionalModify =
 
 export const optionalComposeOptional =
   <A, B>(ab: Optional<A, B>) =>
-  <S>(sa: Optional<S, A>): Optional<S, B> => ({
-    getOption: flow(sa.getOption, O.chain(ab.getOption)),
-    set: (b) => optionalModify(ab.set(b))(sa)
-  })
+  <S>(sa: Optional<S, A>): Optional<S, B> =>
+    new Optional({
+      getOption: flow(sa.getOption, O.chain(ab.getOption)),
+      set: (b) => optionalModify(ab.set(b))(sa)
+    })
 
-const findFirstMutable = <A>(predicate: Predicate<A>): Optional<Array<A>, A> => ({
-  getOption: A.findFirst(predicate),
-  set: (a) => (s) =>
-    O.fold_(
-      A.findIndex(predicate)(s),
-      () => s,
-      (i) => A.unsafeUpdateAt(i, a)(s)
-    )
-})
+const findFirstMutable = <A>(predicate: Predicate<A>): Optional<Array<A>, A> =>
+  new Optional({
+    getOption: A.findFirst(predicate),
+    set: (a) => (s) =>
+      O.fold_(
+        A.findIndex(predicate)(s),
+        () => s,
+        (i) => A.unsafeUpdateAt(i, a)(s)
+      )
+  })
 
 export const findFirst: <A>(predicate: Predicate<A>) => Optional<ReadonlyArray<A>, A> =
   findFirstMutable as any
@@ -322,10 +352,11 @@ export function fromForEach<T>(
 
 function indexMutableArray<A = never>(): Index<Array<A>, number, A> {
   return {
-    index: (i) => ({
-      getOption: A.lookup(i),
-      set: (a) => (as) => O.getOrElse_(A.updateAt(i, a)(as), () => as)
-    })
+    index: (i) =>
+      new Optional({
+        getOption: A.lookup(i),
+        set: (a) => (as) => O.getOrElse_(A.updateAt(i, a)(as), () => as)
+      })
   }
 }
 
@@ -338,15 +369,16 @@ export function indexRecord<A = never>(): Index<
   A
 > {
   return {
-    index: (k) => ({
-      getOption: R.lookup(k),
-      set: (a) => (r) => {
-        if (r[k] === a || O.isNone(R.lookup(k)(r))) {
-          return r
+    index: (k) =>
+      new Optional({
+        getOption: R.lookup(k),
+        set: (a) => (r) => {
+          if (r[k] === a || O.isNone(R.lookup(k)(r))) {
+            return r
+          }
+          return R.insertAt(k, a)(r)
         }
-        return R.insertAt(k, a)(r)
-      }
-    })
+      })
   }
 }
 
