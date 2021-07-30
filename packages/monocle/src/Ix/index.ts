@@ -1,4 +1,4 @@
-// tracing: off
+// ets_tracing: off
 
 import { pipe } from "@effect-ts/core/Function"
 import type { Option } from "@effect-ts/core/Option"

@@ -1,4 +1,4 @@
-// tracing: off
+// ets_tracing: off
 
 /**
  * A `Prism` is an optic used to select part of a sum type.

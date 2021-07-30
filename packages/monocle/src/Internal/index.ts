@@ -1,4 +1,4 @@
-// tracing: off
+// ets_tracing: off
 
 import { Tagged } from "@effect-ts/core/Case"
 import type { Array } from "@effect-ts/core/Collections/Immutable/Array"
