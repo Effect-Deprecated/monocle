@@ -399,9 +399,9 @@
   integrity sha512-7eLeudJvvjxybryau62vkgqcYEfLmQ5z45d1oIpg5f2H9DxNI0IjeP4SBN2DkLol6Khf80ncamefsIDHEFdxlQ==
 
 "@effect-ts/tracing-plugin@^0.14.0":
-  version "0.14.1"
-  resolved "https://registry.yarnpkg.com/@effect-ts/tracing-plugin/-/tracing-plugin-0.14.1.tgz#d98aab7fff70901a96023c2abedff773e99af37d"
-  integrity sha512-apRW3fui/x4zysuKv7i5OvYcKQpIsvtboTBwN6yD7I5+vXyiH7jRv/KtztCL8iC16J+Pq3eTv2+HKJdyPTENZw==
+  version "0.14.5"
+  resolved "https://registry.yarnpkg.com/@effect-ts/tracing-plugin/-/tracing-plugin-0.14.5.tgz#72df6d6a2ecfde0b83e615413cbd8f0a76fb0af4"
+  integrity sha512-hC7A9YWJ3ZBxtlZsoyGwMdQ/4QE28m4pDxzBfV/lVBeoLtlkpWKltGPVf9iUTkzlZiWZQFIJ042SX0MCCJ8dfw==
 
 "@eslint/eslintrc@^0.4.3":
   version "0.4.3"
@@ -1658,9 +1658,9 @@
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
 "@types/node@*", "@types/node@^16.4.7":
-  version "16.7.6"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.7.6.tgz#8666478db8095aa66e25b7e469f3e7b53ea2855e"
-  integrity sha512-VESVNFoa/ahYA62xnLBjo5ur6gPsgEE5cNRy8SrdnkZ2nwJSW0kJ4ufbFr2zuU9ALtHM8juY53VcRoTA7htXSg==
+  version "16.7.8"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.7.8.tgz#2448be5f24fe6b77114632b6350fcd219334651e"
+  integrity sha512-8upnoQU0OPzbIkm+ZMM0zCeFCkw2s3mS0IWdx0+AAaWqm4fkBb0UJp8Edl7FVKRamYbpJC/aVsHpKWBIbiC7Zg==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
@@ -4399,10 +4399,10 @@ humanize-ms@^1.2.1:
   dependencies:
     ms "^2.0.0"
 
-husky@7.0.1:
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/husky/-/husky-7.0.1.tgz#579f4180b5da4520263e8713cc832942b48e1f1c"
-  integrity sha512-gceRaITVZ+cJH9sNHqx5tFwbzlLCVxtVZcusME8JYQ8Edy5mpGDOqD8QBCdMhpyo9a+JXddnujQ4rpY2Ff9SJA==
+husky@7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/husky/-/husky-7.0.2.tgz#21900da0f30199acca43a46c043c4ad84ae88dff"
+  integrity sha512-8yKEWNX4z2YsofXAMT7KvA1g8p+GxtB1ffV8XtpAEGuXNAbCV5wdNKH+qTpw8SM9fh4aMPDR+yQuKfgnreyZlg==
 
 iconv-lite@0.4.24, iconv-lite@^0.4.24:
   version "0.4.24"
