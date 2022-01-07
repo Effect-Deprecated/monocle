@@ -173,10 +173,7 @@ export function forEach<T extends P.URIS, C = P.Auto>(
 
 export const find: <A>(
   predicate: Predicate<A>
-) => <S>(sa: Optional<S, ReadonlyArray<A>>) => Optional<S, A> = flow(
-  _.find,
-  compose
-)
+) => <S>(sa: Optional<S, ReadonlyArray<A>>) => Optional<S, A> = flow(_.find, compose)
 
 // -------------------------------------------------------------------------------------
 // pipeables
