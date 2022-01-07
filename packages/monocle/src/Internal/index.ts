@@ -168,11 +168,16 @@ export const isoAsPrism = <S, A>(sa: Iso<S, A>): Prism<S, A> =>
 
 export const isoAsTraversal = <S, A>(sa: Iso<S, A>): Traversal<S, A> =>
   new Traversal({
-    modifyF: (F) => (f) => (s) =>
-      pipe(
-        f(sa.get(s)),
-        F.map((a) => sa.reverseGet(a))
-      )
+    modifyF:
+      <F extends P.URIS, C = P.Auto>(F: P.Applicative<F, C>) =>
+      <FK, FQ, FW, FX, FI, FS, FR, FE>(
+        f: (a: A) => P.Kind<F, C, FK, FQ, FW, FX, FI, FS, FR, FE, A>
+      ) =>
+      (s: S): P.Kind<F, C, FK, FQ, FW, FX, FI, FS, FR, FE, S> =>
+        pipe(
+          f(sa.get(s)),
+          F.map((a) => sa.reverseGet(a))
+        )
   })
 
 // -------------------------------------------------------------------------------------
@@ -187,11 +192,16 @@ export const lensAsOptional = <S, A>(sa: Lens<S, A>): Optional<S, A> =>
 
 export const lensAsTraversal = <S, A>(sa: Lens<S, A>): Traversal<S, A> =>
   new Traversal({
-    modifyF: (F) => (f) => (s) =>
-      pipe(
-        f(sa.get(s)),
-        F.map((a) => sa.set(a)(s))
-      )
+    modifyF:
+      <F extends P.URIS, C = P.Auto>(F: P.Applicative<F, C>) =>
+      <FK, FQ, FW, FX, FI, FS, FR, FE>(
+        f: (a: A) => P.Kind<F, C, FK, FQ, FW, FX, FI, FS, FR, FE, A>
+      ) =>
+      (s: S): P.Kind<F, C, FK, FQ, FW, FX, FI, FS, FR, FE, S> =>
+        pipe(
+          f(sa.get(s)),
+          F.map((a) => sa.set(a)(s))
+        )
   })
 
 export const lensComposeLens =
@@ -280,7 +290,11 @@ export const prismAsOptional = <S, A>(sa: Prism<S, A>): Optional<S, A> =>
 
 export const prismAsTraversal = <S, A>(sa: Prism<S, A>): Traversal<S, A> =>
   new Traversal({
-    modifyF: (F) => {
+    modifyF: <F extends P.URIS, C = P.Auto>(
+      F: P.Applicative<F, C>
+    ): (<FK, FQ, FW, FX, FI, FS, FR, FE>(
+      f: (a: A) => P.Kind<F, C, FK, FQ, FW, FX, FI, FS, FR, FE, A>
+    ) => (s: S) => P.Kind<F, C, FK, FQ, FW, FX, FI, FS, FR, FE, S>) => {
       const succeed = DSL.succeedF(F)
       return (f) => (s) =>
         O.fold_(
@@ -363,15 +377,19 @@ export const composePrism =
 
 export const optionalAsTraversal = <S, A>(sa: Optional<S, A>): Traversal<S, A> =>
   new Traversal({
-    modifyF: (F) => (f) => {
-      const succeed = DSL.succeedF(F)
-      return (s) =>
-        O.fold_(
-          sa.getOption(s),
-          () => succeed(s),
-          (a) => F.map<A, S>((a: A) => sa.set(a)(s))(f(a))
-        )
-    }
+    modifyF:
+      <F extends P.URIS, C = P.Auto>(F: P.Applicative<F, C>) =>
+      <FK, FQ, FW, FX, FI, FS, FR, FE>(
+        f: (a: A) => P.Kind<F, C, FK, FQ, FW, FX, FI, FS, FR, FE, A>
+      ): ((s: S) => P.Kind<F, C, FK, FQ, FW, FX, FI, FS, FR, FE, S>) => {
+        const succeed = DSL.succeedF(F)
+        return (s) =>
+          O.fold_(
+            sa.getOption(s),
+            () => succeed(s),
+            (a) => F.map<A, S>((a: A) => sa.set(a)(s))(f(a))
+          )
+      }
   })
 
 export const optionalModifyOption =
@@ -419,9 +437,14 @@ export const find: <A>(predicate: Predicate<A>) => Optional<ReadonlyArray<A>, A>
 export function traversalComposeTraversal<A, B>(
   ab: Traversal<A, B>
 ): <S>(sa: Traversal<S, A>) => Traversal<S, B> {
-  return (sa) =>
+  return <S>(sa: Traversal<S, A>) =>
     new Traversal({
-      modifyF: (F) => (f) => sa.modifyF(F)(ab.modifyF(F)(f))
+      modifyF:
+        <F extends P.URIS, C = P.Auto>(F: P.Applicative<F, C>) =>
+        <FK, FQ, FW, FX, FI, FS, FR, FE>(
+          f: (a: B) => P.Kind<F, C, FK, FQ, FW, FX, FI, FS, FR, FE, B>
+        ): ((s: S) => P.Kind<F, C, FK, FQ, FW, FX, FI, FS, FR, FE, S>) =>
+          sa.modifyF(F)(ab.modifyF(F)(f))
     })
 }
 
