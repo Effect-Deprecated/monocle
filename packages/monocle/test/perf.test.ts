@@ -48,7 +48,7 @@ it("benchmark", () => {
     Lens.prop("m"),
     Lens.prop("n"),
     Lens.prop("names"),
-    Lens.findFirst((child: any) => child.id === id)
+    Lens.find((child: any) => child.id === id)
   )
 
   const modify = pipe(

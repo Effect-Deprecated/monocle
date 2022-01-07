@@ -124,7 +124,6 @@ export class Traversal<S, A> extends Tagged("Traversal")<{
     <B>(ab: Optional<A, B>): Traversal<S, B>
     <B>(ab: Traversal<A, B>): Traversal<S, B>
   } = (ab) =>
-    // @ts-expect-error
     matchTag_(ab, {
       Iso: (ab) => traversalComposeTraversal(isoAsTraversal(ab))(this),
       Lens: (ab) => traversalComposeTraversal(lensAsTraversal(ab))(this),
@@ -399,9 +398,9 @@ export const optionalComposeOptional =
       set: (b) => optionalModify(ab.set(b))(sa)
     })
 
-const findFirstMutable = <A>(predicate: Predicate<A>): Optional<Array<A>, A> =>
+const findMutable = <A>(predicate: Predicate<A>): Optional<Array<A>, A> =>
   new Optional({
-    getOption: A.findFirst(predicate),
+    getOption: A.find(predicate),
     set: (a) => (s) =>
       O.fold_(
         A.findIndex(predicate)(s),
@@ -410,8 +409,8 @@ const findFirstMutable = <A>(predicate: Predicate<A>): Optional<Array<A>, A> =>
       )
   })
 
-export const findFirst: <A>(predicate: Predicate<A>) => Optional<ReadonlyArray<A>, A> =
-  findFirstMutable as any
+export const find: <A>(predicate: Predicate<A>) => Optional<ReadonlyArray<A>, A> =
+  findMutable as any
 
 // -------------------------------------------------------------------------------------
 // Traversal
@@ -456,7 +455,7 @@ function indexMutableArray<A = never>(): Index<Array<A>, number, A> {
   return {
     index: (i) =>
       new Optional({
-        getOption: A.lookup(i),
+        getOption: A.get(i),
         set: (a) => (as) => O.getOrElse_(A.updateAt(i, a)(as), () => as)
       })
   }
