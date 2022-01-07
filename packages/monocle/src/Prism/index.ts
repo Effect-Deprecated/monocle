@@ -189,10 +189,10 @@ export function forEach<T extends P.URIS, C = P.Auto>(
   return flow(asTraversal, _.traversalComposeTraversal(_.fromForEach(T)()))
 }
 
-export const findFirst: <A>(
+export const find: <A>(
   predicate: Predicate<A>
 ) => <S>(sa: Prism<S, ReadonlyArray<A>>) => Optional<S, A> = flow(
-  _.findFirst,
+  _.find,
   composeOptional
 )
 
