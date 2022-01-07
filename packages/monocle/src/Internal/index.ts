@@ -124,7 +124,6 @@ export class Traversal<S, A> extends Tagged("Traversal")<{
     <B>(ab: Optional<A, B>): Traversal<S, B>
     <B>(ab: Traversal<A, B>): Traversal<S, B>
   } = (ab) =>
-    // @ts-expect-error
     matchTag_(ab, {
       Iso: (ab) => traversalComposeTraversal(isoAsTraversal(ab))(this),
       Lens: (ab) => traversalComposeTraversal(lensAsTraversal(ab))(this),
