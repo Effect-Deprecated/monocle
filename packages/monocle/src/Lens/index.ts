@@ -19,11 +19,11 @@ import type { Option } from "@effect-ts/core/Option"
 import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"
 
-import * as _ from "../Internal"
-import { Lens } from "../Internal"
-import type { Optional } from "../Optional"
-import type { Prism } from "../Prism"
-import type { Traversal } from "../Traversal"
+import * as _ from "../Internal/index.js"
+import { Lens } from "../Internal/index.js"
+import type { Optional } from "../Optional/index.js"
+import type { Prism } from "../Prism/index.js"
+import type { Traversal } from "../Traversal/index.js"
 
 // -------------------------------------------------------------------------------------
 // model

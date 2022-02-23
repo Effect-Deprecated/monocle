@@ -13,15 +13,15 @@ import type { Newtype } from "@effect-ts/core/Newtype"
 import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"
 
-import * as _ from "../Internal"
+import * as _ from "../Internal/index.js"
 import {
   Iso,
   isoAsPrism as asPrism,
   isoAsTraversal as asTraversal,
   isoComposeIso as compose
-} from "../Internal"
-import type { Lens } from "../Lens"
-import type { Optional } from "../Optional"
+} from "../Internal/index.js"
+import type { Lens } from "../Lens/index.js"
+import type { Optional } from "../Optional/index.js"
 
 // -------------------------------------------------------------------------------------
 // model

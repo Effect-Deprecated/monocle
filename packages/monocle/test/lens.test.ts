@@ -1,8 +1,8 @@
 import { pipe } from "@effect-ts/core/Function"
 import { some } from "@effect-ts/core/Option"
 
-import * as L from "../src/Lens"
-import * as O from "../src/Optional"
+import * as L from "../src/Lens/index.js"
+import * as O from "../src/Optional/index.js"
 
 interface Person {
   name: {

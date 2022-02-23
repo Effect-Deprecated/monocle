@@ -12,8 +12,8 @@ import type * as P from "@effect-ts/core/Prelude"
 import * as DSL from "@effect-ts/core/Prelude/DSL"
 import { matchTag_ } from "@effect-ts/system/Utils"
 
-import type { At } from "../At"
-import type { Index } from "../Ix"
+import type { At } from "../At/index.js"
+import type { Index } from "../Ix/index.js"
 
 export class Lens<S, A> extends Tagged("Lens")<{
   readonly get: (s: S) => A

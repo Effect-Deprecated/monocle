@@ -16,11 +16,11 @@ import * as O from "@effect-ts/core/Option"
 import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"
 
-import * as _ from "../Internal"
-import { composePrism as compose, Prism } from "../Internal"
-import type { Lens } from "../Lens"
-import type { Optional } from "../Optional"
-import type { Traversal } from "../Traversal"
+import * as _ from "../Internal/index.js"
+import { composePrism as compose, Prism } from "../Internal/index.js"
+import type { Lens } from "../Lens/index.js"
+import type { Optional } from "../Optional/index.js"
+import type { Traversal } from "../Traversal/index.js"
 
 import Option = O.Option
 

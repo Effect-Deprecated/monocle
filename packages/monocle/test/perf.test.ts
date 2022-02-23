@@ -3,8 +3,8 @@
 import { pipe } from "@effect-ts/core/Function"
 import * as O from "@effect-ts/core/Option"
 
-import * as Lens from "../src/Lens"
-import * as Optional from "../src/Optional"
+import * as Lens from "../src/Lens/index.js"
+import * as Optional from "../src/Optional/index.js"
 
 const size = 5000
 const mid = Math.floor(size / 2)

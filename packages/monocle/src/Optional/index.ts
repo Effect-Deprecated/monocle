@@ -20,9 +20,9 @@ import * as O from "@effect-ts/core/Option"
 import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"
 
-import * as _ from "../Internal"
-import { Optional } from "../Internal"
-import type { Traversal } from "../Traversal"
+import * as _ from "../Internal/index.js"
+import { Optional } from "../Internal/index.js"
+import type { Traversal } from "../Traversal/index.js"
 
 // -------------------------------------------------------------------------------------
 // model

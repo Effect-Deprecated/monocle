@@ -4,8 +4,8 @@ import * as L from "@effect-ts/core/Collections/Immutable/List"
 import { pipe } from "@effect-ts/core/Function"
 import * as O from "@effect-ts/core/Option"
 
-import * as Lens from "../src/Lens"
-import * as Traversal from "../src/Traversal"
+import * as Lens from "../src/Lens/index.js"
+import * as Traversal from "../src/Traversal/index.js"
 
 const size = 5000
 const mid = Math.floor(size / 2)

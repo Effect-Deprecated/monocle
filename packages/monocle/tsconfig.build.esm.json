@@ -2,6 +2,10 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "build/esm",
+    "declarationDir": "build/dts",
+    "declarationMap": true,
+    "declaration": true,
+    "sourceMap": true,
     "module": "ES6",
     "target": "ES2018",
     "incremental": true,
@@ -16,6 +20,11 @@
       }
     ]
   },
-  "include": ["src/**/*"],
-  "exclude": ["test", "node_modules"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "test",
+    "node_modules"
+  ]
 }

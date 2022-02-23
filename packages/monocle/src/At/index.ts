@@ -3,9 +3,9 @@
 import { pipe } from "@effect-ts/core/Function"
 import type { Option } from "@effect-ts/core/Option"
 
-import * as _ from "../Internal"
-import type { Iso } from "../Iso"
-import type { Lens } from "../Lens"
+import * as _ from "../Internal/index.js"
+import type { Iso } from "../Iso/index.js"
+import type { Lens } from "../Lens/index.js"
 
 // -------------------------------------------------------------------------------------
 // model

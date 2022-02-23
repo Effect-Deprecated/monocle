@@ -19,8 +19,8 @@ import type { Option } from "@effect-ts/core/Option"
 import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"
 
-import * as _ from "../Internal"
-import { ModifyF, Traversal } from "../Internal"
+import * as _ from "../Internal/index.js"
+import { ModifyF, Traversal } from "../Internal/index.js"
 
 // -------------------------------------------------------------------------------------
 // model

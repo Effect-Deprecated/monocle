@@ -1,7 +1,7 @@
 import type { TypeOf } from "@effect-ts/core/Newtype"
 import { typeDef } from "@effect-ts/core/Newtype"
 
-import * as I from "../src/Iso"
+import * as I from "../src/Iso/index.js"
 
 const Id = typeDef<number>()("Id")
 interface Id extends TypeOf<typeof Id> {}
