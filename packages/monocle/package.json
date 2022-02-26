@@ -23,7 +23,7 @@
   },
   "sideEffects": false,
   "peerDependencies": {
-    "@effect-ts/core": "^0.54.7"
+    "@effect-ts/core": "^0.58.0"
   },
   "config": {
     "side": [],
