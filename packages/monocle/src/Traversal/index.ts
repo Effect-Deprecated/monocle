@@ -18,6 +18,7 @@ import type { Identity } from "@effect-ts/core/Identity"
 import type { Option } from "@effect-ts/core/Option"
 import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"
+import type { HashMap } from "@effect-ts/system/Collections/Immutable/HashMap"
 
 import * as _ from "../Internal/index.js"
 import { ModifyF, Traversal } from "../Internal/index.js"
@@ -118,7 +119,7 @@ export const index =
 /**
  * Return a `Traversal` from a `Traversal` focused on a `ReadonlyRecord` and a key
  */
-export const key =
+export const keyInRecord =
   (key: string) =>
   <S, A>(sa: Traversal<S, Readonly<Record<string, A>>>): Traversal<S, A> =>
     pipe(sa, compose(_.optionalAsTraversal(_.indexRecord<A>().index(key))))
@@ -126,10 +127,26 @@ export const key =
 /**
  * Return a `Traversal` from a `Traversal` focused on a `ReadonlyRecord` and a required key
  */
-export const atKey =
+export const atKeyInRecord =
   (key: string) =>
   <S, A>(sa: Traversal<S, Readonly<Record<string, A>>>): Traversal<S, Option<A>> =>
     pipe(sa, compose(_.lensAsTraversal(_.atRecord<A>().at(key))))
+
+/**
+ * Return a `Traversal` from a `Traversal` focused on a `ReadonlyRecord` and a key
+ */
+export const keyInHashMap =
+  <K = never>(key: K) =>
+  <S, A>(sa: Traversal<S, Readonly<HashMap<K, A>>>): Traversal<S, A> =>
+    pipe(sa, compose(_.optionalAsTraversal(_.indexHashMap<K, A>().index(key))))
+
+/**
+ * Return a `Traversal` from a `Traversal` focused on a `ReadonlyRecord` and a required key
+ */
+export const atKeyInHashMap =
+  <K = never>(key: K) =>
+  <S, A>(sa: Traversal<S, Readonly<HashMap<K, A>>>): Traversal<S, Option<A>> =>
+    pipe(sa, compose(_.lensAsTraversal(_.atHashMap<K, A>().at(key))))
 
 /**
  * Return a `Traversal` from a `Traversal` focused on the `Some` of a `Option` type

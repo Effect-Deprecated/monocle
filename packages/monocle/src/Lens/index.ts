@@ -18,6 +18,7 @@ import { flow, pipe } from "@effect-ts/core/Function"
 import type { Option } from "@effect-ts/core/Option"
 import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"
+import type { HashMap } from "@effect-ts/system/Collections/Immutable/HashMap"
 
 import * as _ from "../Internal/index.js"
 import { Lens } from "../Internal/index.js"
@@ -138,7 +139,7 @@ export const index =
 /**
  * Return a `Optional` from a `Lens` focused on a `ReadonlyRecord` and a key
  */
-export const key =
+export const keyInRecord =
   (key: string) =>
   <S, A>(sa: Lens<S, Readonly<Record<string, A>>>): Optional<S, A> =>
     pipe(sa, asOptional, _.optionalComposeOptional(_.indexRecord<A>().index(key)))
@@ -146,10 +147,26 @@ export const key =
 /**
  * Return a `Lens` from a `Lens` focused on a `ReadonlyRecord` and a required key
  */
-export const atKey =
+export const atKeyInRecord =
   (key: string) =>
   <S, A>(sa: Lens<S, Readonly<Record<string, A>>>): Lens<S, Option<A>> =>
     pipe(sa, compose(_.atRecord<A>().at(key)))
+
+/**
+ * Return a `Optional` from a `Lens` focused on a `HashMap` and a key
+ */
+export const keyInHashMap =
+  <K = never>(key: K) =>
+  <S, A>(sa: Lens<S, Readonly<HashMap<K, A>>>): Optional<S, A> =>
+    pipe(sa, asOptional, _.optionalComposeOptional(_.indexHashMap<K, A>().index(key)))
+
+/**
+ * Return a `Lens` from a `Lens` focused on a `HashMap` and a required key
+ */
+export const atKeyInHashMap =
+  <K>(key: K) =>
+  <S, A>(sa: Lens<S, Readonly<HashMap<K, A>>>): Lens<S, Option<A>> =>
+    pipe(sa, compose(_.atHashMap<K, A>().at(key)))
 
 /**
  * Return a `Optional` from a `Lens` focused on the `Some` of a `Option` type
@@ -179,7 +196,7 @@ export const set =
     lens.set(a)
 
 /**
- * Pipeable set
+ * Pipeable get
  */
 export const get = <S, A>(lens: Lens<S, A>) => lens.get
 

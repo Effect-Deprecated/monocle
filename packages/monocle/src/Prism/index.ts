@@ -15,6 +15,7 @@ import type { Newtype } from "@effect-ts/core/Newtype"
 import * as O from "@effect-ts/core/Option"
 import type { URI } from "@effect-ts/core/Prelude"
 import * as P from "@effect-ts/core/Prelude"
+import type { HashMap } from "@effect-ts/system/Collections/Immutable/HashMap"
 
 import * as _ from "../Internal/index.js"
 import { composePrism as compose, Prism } from "../Internal/index.js"
@@ -144,7 +145,7 @@ export const index =
 /**
  * Return a `Optional` from a `Prism` focused on a `ReadonlyRecord` and a key
  */
-export const key =
+export const keyInRecord =
   (key: string) =>
   <S, A>(sa: Prism<S, Readonly<Record<string, A>>>): Optional<S, A> =>
     pipe(sa, asOptional, _.optionalComposeOptional(_.indexRecord<A>().index(key)))
@@ -152,10 +153,26 @@ export const key =
 /**
  * Return a `Optional` from a `Prism` focused on a `ReadonlyRecord` and a required key
  */
-export const atKey =
+export const atKeyInRecord =
   (key: string) =>
   <S, A>(sa: Prism<S, Readonly<Record<string, A>>>): Optional<S, Option<A>> =>
     _.prismComposeLens(_.atRecord<A>().at(key))(sa)
+
+/**
+ * Return a `Optional` from a `Prism` focused on a `HashMap` and a key
+ */
+export const keyInHashMap =
+  <K = never>(key: K) =>
+  <S, A>(sa: Prism<S, Readonly<HashMap<K, A>>>): Optional<S, A> =>
+    pipe(sa, asOptional, _.optionalComposeOptional(_.indexHashMap<K, A>().index(key)))
+
+/**
+ * Return a `Optional` from a `Prism` focused on a `HashMap` and a required key
+ */
+export const atKeyInHashMap =
+  <K = never>(key: K) =>
+  <S, A>(sa: Prism<S, Readonly<HashMap<K, A>>>): Optional<S, Option<A>> =>
+    _.prismComposeLens(_.atHashMap<K, A>().at(key))(sa)
 
 /**
  * Return a `Prism` from a `Prism` focused on the `Some` of a `Option` type
