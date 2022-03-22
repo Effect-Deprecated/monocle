@@ -2,6 +2,7 @@
 
 import { pipe } from "@effect-ts/core/Function"
 import type { Option } from "@effect-ts/core/Option"
+import type { HashMap } from "@effect-ts/system/Collections/Immutable/HashMap"
 
 import type { At } from "../At/index.js"
 import * as _ from "../Internal/index.js"
@@ -41,3 +42,9 @@ export const indexRecord: <A = never>() => Index<
   string,
   A
 > = _.indexRecord
+
+export const indexHashMap: <K = never, A = never>() => Index<
+  Readonly<HashMap<K, A>>,
+  K,
+  A
+> = _.indexHashMap

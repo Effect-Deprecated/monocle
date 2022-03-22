@@ -10,6 +10,7 @@ import { constant, flow, identity, pipe } from "@effect-ts/core/Function"
 import * as O from "@effect-ts/core/Option"
 import type * as P from "@effect-ts/core/Prelude"
 import * as DSL from "@effect-ts/core/Prelude/DSL"
+import * as HM from "@effect-ts/system/Collections/Immutable/HashMap"
 import { matchTag_ } from "@effect-ts/system/Utils"
 
 import type { At } from "../At/index.js"
@@ -506,6 +507,26 @@ export function indexRecord<A = never>(): Index<
   }
 }
 
+export function indexHashMap<K = never, A = never>(): Index<
+  Readonly<HM.HashMap<K, A>>,
+  K,
+  A
+> {
+  return {
+    index: (k) =>
+      new Optional({
+        getOption: HM.get(k),
+        set: (a) => (m) => {
+          const x = HM.get_(m, k)
+          if ((x._tag === "Some" && x.value === a) || !HM.has_(m, k)) {
+            return m
+          }
+          return HM.set_(m, k, a)
+        }
+      })
+  }
+}
+
 // -------------------------------------------------------------------------------------
 // At
 // -------------------------------------------------------------------------------------
@@ -522,6 +543,23 @@ export function atRecord<A = never>(): At<
         set: O.fold(
           () => R.deleteAt(key),
           (a) => R.insertAt(key, a)
+        )
+      })
+  }
+}
+
+export function atHashMap<K = never, A = never>(): At<
+  Readonly<HM.HashMap<K, A>>,
+  K,
+  O.Option<A>
+> {
+  return {
+    at: (key) =>
+      new Lens({
+        get: HM.get(key),
+        set: O.fold(
+          () => HM.remove(key),
+          (a) => HM.set(key, a)
         )
       })
   }
