@@ -1,6 +1,6 @@
 // ets_tracing: off
 
-import { HashMap } from "@effect-ts/core"
+import type { HashMap } from "@effect-ts/core"
 import { pipe } from "@effect-ts/core/Function"
 import type { Option } from "@effect-ts/core/Option"
 
@@ -34,7 +34,6 @@ export const atRecord: <A = never>() => At<
   string,
   Option<A>
 > = _.atRecord
-
 
 export const atHashMap: <K = never, A = never>() => At<
   Readonly<HashMap.HashMap<K, A>>,
