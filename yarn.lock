@@ -2153,10 +2153,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^17.0.21":
+"@types/node@npm:*":
   version: 17.0.21
   resolution: "@types/node@npm:17.0.21"
   checksum: 89dcd2fe82f21d3634266f8384e9c865cf8af49685639fbdbd799bdd1040480fb1e8eeda2d3b9fce41edbe704d2a4be9f427118c4ae872e8d9bb7cbeb3c41a94
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^18.11.14":
+  version: 18.11.14
+  resolution: "@types/node@npm:18.11.14"
+  checksum: 1effaf6d55bbcccde9bca763e6454ebf92047726450256ccc0673bf44e4661fbddcd788b0779bad8a13809b05a7bdcbfba81db0713235478b866d553be864be9
   languageName: node
   linkType: hard
 
@@ -4347,7 +4354,7 @@ __metadata:
     "@types/cpx": ^1.5.2
     "@types/glob": ^7.2.0
     "@types/jest": ^27.4.1
-    "@types/node": ^17.0.21
+    "@types/node": ^18.11.14
     "@types/rimraf": ^3.0.2
     "@typescript-eslint/eslint-plugin": ^5.12.1
     "@typescript-eslint/parser": ^5.12.1
