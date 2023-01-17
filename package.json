@@ -67,7 +67,7 @@
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jest": "^26.1.1",
     "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "eslint-plugin-simple-import-sort": "^9.0.0",
     "eslint-plugin-sort-destructure-keys": "^1.4.0",
     "fast-safe-stringify": "^2.1.1",
     "glob": "^7.2.0",

@@ -4364,7 +4364,7 @@ __metadata:
     eslint-plugin-import: ^2.25.4
     eslint-plugin-jest: ^26.1.1
     eslint-plugin-prettier: ^4.0.0
-    eslint-plugin-simple-import-sort: ^7.0.0
+    eslint-plugin-simple-import-sort: ^9.0.0
     eslint-plugin-sort-destructure-keys: ^1.4.0
     fast-safe-stringify: ^2.1.1
     glob: ^7.2.0
@@ -4691,12 +4691,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-simple-import-sort@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "eslint-plugin-simple-import-sort@npm:7.0.0"
+"eslint-plugin-simple-import-sort@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "eslint-plugin-simple-import-sort@npm:9.0.0"
   peerDependencies:
     eslint: ">=5.0.0"
-  checksum: 6aacb7179c213cd2081950630368d1f3b1dcb4f5674d8b989fe7839e7b317ee521d74761676e8b1a7cab49f20405dbcc9aac05358ae804e6bcba6cbf1daccb3d
+  checksum: 09dac706f11e625c4994a4452d799a3fc8ad928fd9a1a3891943a1b54cccf2d30a95066a81a13e8f40204441f8d140bd2a735db4870ef42799f6aed94398c88a
   languageName: node
   linkType: hard
 
